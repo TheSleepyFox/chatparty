@@ -1,5 +1,5 @@
 const client = new tmi.Client({
-  channels: ['yourusername']  // all lowercase!
+  channels: ['thesleepyfox']  // all lowercase!
 });
 
 client.connect().then(() => {
