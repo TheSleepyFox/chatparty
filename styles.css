@@ -1,0 +1,16 @@
+
+#reaction {
+  font-size: 60px;
+  transition: transform 0.5s ease;
+  display: inline-block;
+}
+
+.jump {
+  animation: jumpAnim 0.5s ease;
+}
+
+@keyframes jumpAnim {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-100px); }
+  100% { transform: translateY(0); }
+}
