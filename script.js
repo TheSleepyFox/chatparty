@@ -1,29 +1,20 @@
-// Connect to Twitch chat
 const client = new tmi.Client({
-  channels: ['thesleepyfox']
+  channels: ['yourusername']  // all lowercase!
 });
-
-client.connect();
 
 client.connect().then(() => {
-  console.log('✅ Connected to Twitch chat');
+  console.log('✅ Connected to Twitch');
 });
 
-// Listen for chat messages
 client.on('message', (channel, tags, message, self) => {
-  console.log(`Chat: ${tags['display-name']}: ${message}`);
+  console.log(`${tags['display-name']}: ${message}`);
+  
+  if (message.toLowerCase() === '!jump') {
+    console.log('Detected !jump');
+    document.getElementById('emoji').classList.add('jump');
 
-  if (message.trim().toLowerCase() === '!jump') {
-    console.log('🟢 !jump command detected');
-    triggerJump();
+    setTimeout(() => {
+      document.getElementById('emoji').classList.remove('jump');
+    }, 600);
   }
 });
-
-// Trigger jump animation
-function triggerJump() {
-  const emoji = document.getElementById('emoji');
-  emoji.classList.add('jump');
-
-  // Remove the class after the animation so it can be re-triggered
-  setTimeout(() => emoji.classList.remove('jump'), 600);
-}
