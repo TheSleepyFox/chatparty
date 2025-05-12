@@ -1,9 +1,9 @@
 const client = new tmi.Client({
-  channels: ['thesleepyfox'] // Replace with your Twitch username
+  channels: ['yourtwitchusername'] // Replace with your actual Twitch username
 });
 
 client.connect().then(() => {
-  console.log('✅ Connected to Twitch');
+  console.log('✅ Connected to Twitch chat');
 });
 
 client.on('message', (channel, tags, message, self) => {
@@ -12,6 +12,9 @@ client.on('message', (channel, tags, message, self) => {
   if (message.toLowerCase() === '!jump') {
     const emoji = document.getElementById('emoji');
     emoji.classList.add('jump');
-    setTimeout(() => emoji.classList.remove('jump'), 600);
+
+    setTimeout(() => {
+      emoji.classList.remove('jump');
+    }, 600);
   }
 });

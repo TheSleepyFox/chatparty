@@ -1,24 +1,21 @@
 body {
-  margin: 0;
   background: transparent;
-  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  color: red;
+  margin: 0;
 }
 
 #emoji {
   font-size: 100px;
-  transition: transform 0.3s ease;
 }
 
 .jump {
-  animation: jump 0.6s ease;
+  animation: jumpAnim 0.6s ease;
 }
 
-@keyframes jump {
+@keyframes jumpAnim {
   0%   { transform: translateY(0); }
   50%  { transform: translateY(-100px); }
   100% { transform: translateY(0); }
