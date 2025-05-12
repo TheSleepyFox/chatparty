@@ -1,13 +1,20 @@
 // Connect to Twitch chat
 const client = new tmi.Client({
-  channels: ['thesleepyfox'] // Replace with your Twitch username
+  channels: ['thesleepyfox']
 });
 
 client.connect();
 
+client.connect().then(() => {
+  console.log('✅ Connected to Twitch chat');
+});
+
 // Listen for chat messages
 client.on('message', (channel, tags, message, self) => {
+  console.log(`Chat: ${tags['display-name']}: ${message}`);
+
   if (message.trim().toLowerCase() === '!jump') {
+    console.log('🟢 !jump command detected');
     triggerJump();
   }
 });
