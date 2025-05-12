@@ -1,5 +1,5 @@
 const client = new tmi.Client({
-  channels: ['yourtwitchusername'] // Replace with your actual Twitch username
+  channels: ['thesleepyfox'] // Replace with your actual Twitch username
 });
 
 client.connect().then(() => {
