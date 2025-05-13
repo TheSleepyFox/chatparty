@@ -1,55 +1,87 @@
+// === Twitch Connection ===
 const client = new tmi.Client({
-  connection: {
-    secure: true,
-    reconnect: true
-  },
-  channels: ['thesleepyfox']  // 🔁 Replace with your Twitch username
+  connection: { reconnect: true },
+  channels: ['thesleepyfox'] // 👈 Replace with your Twitch channel name
 });
 
-client.connect().then(() => {
-  console.log('✅ Connected to Twitch');
+client.connect();
+
+// === State ===
+const userEmojis = {};              // Stores username -> emoji
+const activeUsers = {};            // Stores username -> DOM container
+
+// === Handle Chat Messages (for !emoji command) ===
+client.on('message', (channel, tags, message, self) => {
+  if (self) return;
+
+  const username = tags['display-name'] || tags.username;
+  const usernameKey = username.toLowerCase();
+
+  if (message.startsWith('!emoji ')) {
+    const parts = message.trim().split(' ');
+    const newEmoji = parts[1];
+
+    if (newEmoji && newEmoji.length <= 3) {
+      userEmojis[usernameKey] = newEmoji;
+      console.log(`${username} set their emoji to ${newEmoji}`);
+
+      // 🔄 Update emoji on screen if user is already active
+      const userDiv = activeUsers[usernameKey];
+      if (userDiv) {
+        const emojiElement = userDiv.querySelector('.join-emoji');
+        if (emojiElement) {
+          emojiElement.textContent = newEmoji;
+        }
+      }
+    }
+  }
 });
 
+// === Handle User Join ===
 client.on('join', (channel, username, self) => {
   if (self) return;
 
+  const usernameKey = username.toLowerCase();
   const container = document.getElementById('join-container');
 
-  // Create a container for the user
+  // Create a container for username + emoji
   const userDiv = document.createElement('div');
   userDiv.className = 'user-container';
 
-  // Username element
+  // Username
   const usernameDiv = document.createElement('div');
   usernameDiv.className = 'join-username';
   usernameDiv.textContent = username;
-  usernameDiv.style.color = '#00FFFF'; // Test color — will show up
+  usernameDiv.style.color = '#00FFFF'; // Static or dynamic later
 
-  // Emoji element
-  const emoji = document.createElement('div');
-  emoji.className = 'join-emoji';
-  emoji.textContent = '🐸';
+  // Emoji
+  const emojiDiv = document.createElement('div');
+  emojiDiv.className = 'join-emoji';
+  const emojiChar = userEmojis[usernameKey] || '🐸';
+  emojiDiv.textContent = emojiChar;
 
   // Assemble
   userDiv.appendChild(usernameDiv);
-  userDiv.appendChild(emoji);
+  userDiv.appendChild(emojiDiv);
   container.appendChild(userDiv);
 
-  // Position
+  // Position horizontally
   const startX = Math.random() * 90;
   userDiv.style.left = `${startX}%`;
 
-  // After drop, wander
+  // Store for future emoji updates
+  activeUsers[usernameKey] = userDiv;
+
+  // Animate falling in
   setTimeout(() => {
     userDiv.style.animation = '';
     startWandering(userDiv);
   }, 1600);
 });
 
-
-
+// === Wandering Behavior ===
 function startWandering(element) {
-  let x = parseFloat(element.style.left);
+  let x = parseFloat(element.style.left) || 0;
   let direction = Math.random() < 0.5 ? -1 : 1;
 
   function wanderStep() {
@@ -59,7 +91,6 @@ function startWandering(element) {
 
     x += direction * 0.5;
     x = Math.max(0, Math.min(x, 95));
-
     element.style.left = `${x}%`;
 
     requestAnimationFrame(wanderStep);
@@ -67,30 +98,3 @@ function startWandering(element) {
 
   wanderStep();
 }
-
-window.testDrop = function () {
-  const container = document.getElementById('join-container');
-  const userDiv = document.createElement('div');
-  userDiv.className = 'user-container';
-
-  const usernameDiv = document.createElement('div');
-  usernameDiv.className = 'join-username';
-  usernameDiv.textContent = 'TestUser';
-  usernameDiv.style.color = '#FF00FF';
-
-  const emoji = document.createElement('div');
-  emoji.className = 'join-emoji';
-  emoji.textContent = '🐸';
-
-  userDiv.appendChild(usernameDiv);
-  userDiv.appendChild(emoji);
-  container.appendChild(userDiv);
-
-  const startX = Math.random() * 90;
-  userDiv.style.left = `${startX}%`;
-
-  setTimeout(() => {
-    userDiv.style.animation = '';
-    startWandering(userDiv);
-  }, 1600);
-};

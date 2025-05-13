@@ -1,13 +1,3 @@
-body {
-  background: darkgray;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-}
-
-/* Container for all join emojis */
 #join-container {
   position: absolute;
   top: 0;
@@ -16,6 +6,7 @@ body {
   height: 100%;
   pointer-events: none;
   overflow: hidden;
+  z-index: 1;
 }
 
 .user-container {
@@ -29,12 +20,10 @@ body {
 }
 
 .join-username {
-  border: 1px solid red;
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 2px;
   text-shadow: 0 0 2px black;
-  color: white;
+  margin-bottom: 2px;
   z-index: 11;
 }
 
@@ -44,14 +33,6 @@ body {
 }
 
 @keyframes fall {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(85vh);
-    opacity: 1;
-  }
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(85vh); opacity: 1; }
 }
-
-
