@@ -30,6 +30,20 @@ client.on('message', (channel, tags, message, self) => {
       }
     }
   }
+  const userDiv = activeUsers[usernameKey];
+  if (userDiv) {
+    const bubble = userDiv.querySelector(".speech-bubble");
+    if (bubble) {
+      bubble.textContent = message;
+      bubble.style.display = "block";
+      bubble.style.opacity = "1";
+
+      // Fade out after 3s
+      setTimeout(() => {
+        bubble.style.opacity = "0";
+      }, 3000);
+    }
+  }
 });
 
 // ========== Handle User Join ==========
@@ -64,8 +78,14 @@ function dropUser(username, emoji) {
   emojiDiv.src = "assets/idle.gif"; // default to idle gif
   emojiDiv.alt = emoji; // optional: fallback emoji
 
+  const speechBubble = document.createElement("div");
+  speechBubble.className = "speech-bubble";
+  speechBubble.textContent = ""; // Will be filled on message
+  speechBubble.style.display = "none";
+
   userDiv.appendChild(usernameDiv);
   userDiv.appendChild(emojiDiv);
+  container.appendChild(speechBubble);
   container.appendChild(userDiv);
 
   activeUsers[usernameKey] = userDiv;
