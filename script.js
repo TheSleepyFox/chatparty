@@ -175,7 +175,6 @@ function startWandering(userDiv) {
   step();
 }
 
-}
 
 // ========== Test Drop Button Function ==========
 function testDrop() {
