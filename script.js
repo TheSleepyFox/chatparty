@@ -106,7 +106,7 @@ function startWandering(element) {
       element.style.left = `${pos}%`;
 
       // Random chance to pause
-      if (Math.random() < 0.005) { // ~0.5% chance per frame
+      if (Math.random() < 0.25) { // ~0.5% chance per frame
         isPaused = true;
         pauseTimer = Date.now() + (500 + Math.random() * 1500); // pause 0.5–2 sec
       }
