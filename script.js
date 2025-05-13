@@ -35,28 +35,30 @@ client.on('join', (channel, username, self) => {
 });
 
 function startWandering(emoji) {
-  let x = parseFloat(emoji.style.left);
-  let direction = Math.random() < 0.5 ? -1 : 1;
+  let x = parseFloat(emoji.style.left);               // Current X position
+  let direction = Math.random() < 0.5 ? -1 : 1;        // Use let so we can change it
 
   function wanderStep() {
-    // Change direction randomly
+    // Occasionally reverse direction
     if (Math.random() < 0.05) {
-      direction *= -1;
+      direction *= -1;                                // ✅ This is valid now
     }
 
-    // Move a little
+    // Move left or right
     x += direction * 0.5;
+
+    // Stay within screen bounds
     if (x < 0) x = 0;
     if (x > 95) x = 95;
 
     emoji.style.left = `${x}%`;
 
-    // Repeat
     requestAnimationFrame(wanderStep);
   }
 
   wanderStep();
 }
+
 
 
 // Attach testDrop to the global window object so HTML can call it
