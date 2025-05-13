@@ -9,9 +9,14 @@ client.connect();
 const userEmojis = {};
 const activeUsers = {};
 
+const userTimers = {}; // usernameKey -> timeout ID
+const userStates = {}; // usernameKey -> 'active' or 'idle'
+
 // ========== Handle Chat Messages ==========
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
+
+  resetIdleTimer(usernameKey);
 
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
@@ -32,7 +37,7 @@ client.on('message', (channel, tags, message, self) => {
       bubble.style.opacity = "1";
 
       console.log(`[Speech] ${username} says: ${message}`);
-      
+
       setTimeout(() => {
         bubble.style.opacity = "0";
       }, 3000);
@@ -69,6 +74,8 @@ client.on('join', (channel, username, self) => {
 
 // ========== Drop User Emoji ==========
 function dropUser(username, emoji) {
+  resetIdleTimer(usernameKey);
+
   const usernameKey = username.toLowerCase();
   const container = document.getElementById("join-container");
 
@@ -158,4 +165,56 @@ function testDrop() {
   const emoji = ["🦊", "🐸", "🦄", "🐱", "👾", "🌟", "🐢", "🍕"][Math.floor(Math.random() * 8)];
   userEmojis[testUser.toLowerCase()] = emoji;
   dropUser(testUser, emoji);
+}
+
+
+// ========== Idle Timer Function ==========
+function resetIdleTimer(usernameKey) {
+  clearTimeout(userTimers[usernameKey]);
+
+  // Wake them if they were idle
+  if (userStates[usernameKey] === "idle") {
+    wakeUserUp(usernameKey);
+  }
+
+  // Set idle after 30 seconds of inactivity
+  userTimers[usernameKey] = setTimeout(() => {
+    setUserIdle(usernameKey);
+  }, 30000);
+}
+
+
+// ========== Away Function ==========
+function setUserIdle(usernameKey) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  const emojiImg = userDiv.querySelector(".join-emoji");
+  if (emojiImg) {
+    emojiImg.src = "assets/away.gif"; // 👈 Replace with your real file path
+  }
+
+  // Stop wandering by removing its animation loop
+  if (userDiv._wanderingFrame) {
+    cancelAnimationFrame(userDiv._wanderingFrame);
+    userDiv._wanderingFrame = null;
+  }
+
+  userStates[usernameKey] = "idle";
+}
+
+function wakeUserUp(usernameKey) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  const emojiImg = userDiv.querySelector(".join-emoji");
+  if (emojiImg) {
+    emojiImg.src = "assets/idle.gif";
+  }
+
+  if (!userDiv._wanderingFrame) {
+    startWandering(userDiv);
+  }
+
+  userStates[usernameKey] = "active";
 }
