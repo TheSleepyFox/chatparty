@@ -1,18 +1,30 @@
+body {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Container for all join emojis */
 #join-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  pointer-events: none; /* Let clicks pass through */
+  height: 100%;
+  pointer-events: none;
   z-index: 10;
 }
 
+/* Each emoji that falls from the top */
 .join-emoji {
   position: absolute;
   top: -50px;
   font-size: 40px;
-  animation: fall 2s ease-in-out forwards;
   white-space: nowrap;
+  animation: fall 2s ease-in-out forwards;
 }
 
 @keyframes fall {

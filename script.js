@@ -1,3 +1,16 @@
+const client = new tmi.Client({
+  connection: {
+    secure: true,
+    reconnect: true
+  },
+  channels: ['thesleepyfox']  // 🔁 Replace with your Twitch username
+});
+
+client.connect().then(() => {
+  console.log('✅ Connected to Twitch');
+});
+
+// Show a falling emoji when a new user joins chat
 client.on('join', (channel, username, self) => {
   if (self) return;
 
@@ -7,16 +20,18 @@ client.on('join', (channel, username, self) => {
   const emoji = document.createElement('div');
   emoji.className = 'join-emoji';
 
-  // Use random emoji or username
-  const emojis = ['👋', '🎉', '🔥', '🐸', '💥'];
+  // Customize emoji or add username:
+  const emojis = ['👋', '🎉', '🔥', '💥', '🌟', '🐸'];
   emoji.textContent = `${emojis[Math.floor(Math.random() * emojis.length)]} ${username}`;
 
-  // Random left position
-  emoji.style.left = `${Math.random() * 90}%`;
+  // Random horizontal position (0–90%)
+  const x = Math.random() * 90;
+  emoji.style.left = `${x}%`;
 
   container.appendChild(emoji);
 
+  // Remove after animation ends
   setTimeout(() => {
-    container.removeChild(emoji);
+    emoji.remove();
   }, 2500);
 });
