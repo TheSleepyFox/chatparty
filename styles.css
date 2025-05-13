@@ -18,25 +18,27 @@ body {
   z-index: 10;
 }
 
-/* Each emoji that falls from the top */
-.join-emoji {
+.user-container {
   position: absolute;
   top: -50px;
-  font-size: 40px;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   animation: fall 1.5s ease-in forwards;
-  z-index: 10;
+  z-index: 11;
 }
 
 .join-username {
-  position: absolute;
   font-size: 16px;
   font-weight: bold;
-  color: white; /* Will be overridden by JS */
-  text-align: center;
-  transform: translateY(-20px); /* Move above the emoji */
+  text-shadow: 0 0 2px black;
+  margin-bottom: 4px;
+  z-index: 12;
+}
+
+.join-emoji {
+  font-size: 40px;
   z-index: 11;
-  animation: fadeIn 1s ease-out forwards;
 }
 
 @keyframes fall {
@@ -44,10 +46,3 @@ body {
   100% { transform: translateY(85vh); opacity: 1; }
 }
 
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-
-}

@@ -15,67 +15,51 @@ client.on('join', (channel, username, self) => {
 
   const container = document.getElementById('join-container');
 
+  // Create wrapper
+  const userDiv = document.createElement('div');
+  userDiv.className = 'user-container';
+
+  // Create username div
+  const usernameDiv = document.createElement('div');
+  usernameDiv.className = 'join-username';
+  usernameDiv.textContent = username;
+  usernameDiv.style.color = '#00FFFF'; // You can replace with dynamic color
+
+  // Create emoji div
   const emoji = document.createElement('div');
   emoji.className = 'join-emoji';
   emoji.textContent = '🐸';
 
-  const usernameDiv = document.createElement('div');
-  usernameDiv.className = 'join-username';
-  usernameDiv.textContent = username;
+  // Build the structure
+  userDiv.appendChild(usernameDiv);
+  userDiv.appendChild(emoji);
+  container.appendChild(userDiv);
 
-  // Set username color (can be dynamic later)
-  usernameDiv.style.color = '#00FFFF';
-
-  // Initial position
+  // Position horizontally
   const startX = Math.random() * 90;
-  emoji.style.left = `${startX}%`;
-  usernameDiv.style.left = `${startX}%`;
+  userDiv.style.left = `${startX}%`;
 
-  // Add both to container
-  container.appendChild(usernameDiv);
-  container.appendChild(emoji);
-
-  // After drop, start wandering
+  // Animate after fall
   setTimeout(() => {
-    emoji.style.animation = '';
-    usernameDiv.style.animation = '';
-    startWandering(emoji);
-    startWandering(usernameDiv);
+    userDiv.style.animation = '';
+    startWandering(userDiv);
   }, 1600);
 });
 
 
-function getColorForUsername(username) {
-  // Example color assignment - could be dynamic based on your own needs
-  const colorMap = {
-    'username1': '#FF5733', // Red
-    'username2': '#33FF57', // Green
-    'username3': '#3357FF', // Blue
-  };
-
-  return colorMap[username.toLowerCase()] || null;
-}
-
-
-
-function startWandering(emoji) {
-  let x = parseFloat(emoji.style.left);               // Current X position
-  let direction = Math.random() < 0.5 ? -1 : 1;        // Use let so we can change it
+function startWandering(element) {
+  let x = parseFloat(element.style.left);
+  let direction = Math.random() < 0.5 ? -1 : 1;
 
   function wanderStep() {
-    // Occasionally reverse direction
     if (Math.random() < 0.05) {
-      direction *= -1;                                // ✅ This is valid now
+      direction *= -1;
     }
 
-    // Move left or right
     x += direction * 0.5;
+    x = Math.max(0, Math.min(x, 95));
 
-    // Stay within screen bounds
-    if (x < 0) x = 0;
-    if (x > 95) x = 95;
-
-    emoji.style.left = `${x}%`;
+    element.style.left = `${x}%`;
 
     requestAnimationFrame(wanderStep);
   }
@@ -83,31 +67,3 @@ function startWandering(emoji) {
   wanderStep();
 }
 
-
-
-window.testDrop = function () {
-  const container = document.getElementById('join-container');
-
-  const emoji = document.createElement('div');
-  emoji.className = 'join-emoji';
-  emoji.textContent = '🐸';
-
-  const usernameDiv = document.createElement('div');
-  usernameDiv.className = 'join-username';
-  usernameDiv.textContent = 'TestUser';
-  usernameDiv.style.color = '#FF00FF';
-
-  const startX = Math.random() * 90;
-  emoji.style.left = `${startX}%`;
-  usernameDiv.style.left = `${startX}%`;
-
-  container.appendChild(usernameDiv);
-  container.appendChild(emoji);
-
-  setTimeout(() => {
-    emoji.style.animation = '';
-    usernameDiv.style.animation = '';
-    startWandering(emoji);
-    startWandering(usernameDiv);
-  }, 1600);
-};
