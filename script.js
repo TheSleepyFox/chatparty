@@ -134,7 +134,7 @@ function startWandering(userDiv) {
 
   const emojiImg = userDiv.querySelector(".join-emoji");
   if (emojiImg) {
-    emojiImg.src = direction === -1 ? "assets/walking-left.gif" : "assets/walking-right.gif";
+    emojiImg.src = direction === -1 ? "assets/left.gif" : "assets/wright.gif";
   }
 
   function step() {
