@@ -16,20 +16,13 @@ client.on('message', (channel, tags, message, self) => {
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
 
-  // !emoji 🐸 command
-  if (message.startsWith('!emoji ')) {
-    const newEmoji = message.split(' ')[1];
-    if (newEmoji && newEmoji.length <= 2) {
-      userEmojis[usernameKey] = newEmoji;
-
-      // If already active, update the emoji
-      const userDiv = activeUsers[usernameKey];
-      if (userDiv) {
-        const emojiDiv = userDiv.querySelector('.join-emoji');
-        if (emojiDiv) emojiDiv.textContent = newEmoji;
-      }
-    }
+  // Drop the user if not yet active
+  if (!activeUsers[usernameKey]) {
+    const emoji = userEmojis[usernameKey] || "✨";
+    dropUser(username, emoji);
   }
+
+  // ✅ SPEECH BUBBLE LOGIC
   const userDiv = activeUsers[usernameKey];
   if (userDiv) {
     const bubble = userDiv.querySelector(".speech-bubble");
@@ -38,13 +31,30 @@ client.on('message', (channel, tags, message, self) => {
       bubble.style.display = "block";
       bubble.style.opacity = "1";
 
-      // Fade out after 3s
+      console.log(`[Speech] ${username} says: ${message}`);
+      
       setTimeout(() => {
         bubble.style.opacity = "0";
       }, 3000);
     }
   }
+
+  // !emoji command support
+  if (message.startsWith('!emoji ')) {
+    const newEmoji = message.split(' ')[1];
+    if (newEmoji && newEmoji.length <= 2) {
+      userEmojis[usernameKey] = newEmoji;
+      const userDiv = activeUsers[usernameKey];
+      if (userDiv) {
+        const emojiImg = userDiv.querySelector(".join-emoji");
+        if (emojiImg) {
+          emojiImg.alt = newEmoji;
+        }
+      }
+    }
+  }
 });
+
 
 // ========== Handle User Join ==========
 client.on('join', (channel, username, self) => {
