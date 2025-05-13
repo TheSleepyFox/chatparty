@@ -29,7 +29,13 @@ body {
 }
 
 @keyframes fall {
-  0%   { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(85vh); opacity: 1; }
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(85vh);
+    opacity: 1; /* 👈 Don't fade out */
+  }
 }
 }
