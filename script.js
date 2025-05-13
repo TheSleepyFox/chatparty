@@ -166,7 +166,7 @@ function startWandering(userDiv) {
       setTimeout(() => {
         // Only restart if user is still active
         if (userStates[usernameKey] === "active") {
-          startWandering(userDiv);
+          startWandering(userDiv); // 🔁 restart wandering
         }
       }, 1000 + Math.random() * 2000);
     }
