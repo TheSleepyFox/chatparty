@@ -2,17 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Twitch Overlay - Emoji Jump</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emoji Jump 0.4</title>
+  
+  <!-- Load your CSS -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <!-- Jumping emoji -->
+  <div id="emoji">🐸</div>
+
+  <!-- Container for falling join emojis -->
   <div id="join-container"></div>
 
-  <!-- Load tmi.js library -->
+  <!-- Load tmi.js (use your locally built version from dist/) -->
   <script src="tmi.min.js"></script>
 
-  
   <!-- Load your custom script -->
   <script src="script.js"></script>
 </body>
