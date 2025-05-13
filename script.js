@@ -35,3 +35,16 @@ client.on('join', (channel, username, self) => {
     emoji.remove();
   }, 2500);
 });
+
+function testDrop() {
+  const container = document.getElementById('join-container');
+  const emoji = document.createElement('div');
+  emoji.className = 'join-emoji';
+  emoji.textContent = '🐸 test';
+  emoji.style.left = `${Math.random() * 90}%`;
+  container.appendChild(emoji);
+
+  setTimeout(() => {
+    emoji.remove();
+  }, 2500);
+}
