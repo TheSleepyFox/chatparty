@@ -1,14 +1,20 @@
+/* General body style */
 body {
   background: transparent;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
 }
 
+/* Jumping emoji */
 #emoji {
   font-size: 100px;
+  z-index: 5;
+  position: relative;
 }
 
 .jump {
@@ -20,3 +26,12 @@ body {
   50%  { transform: translateY(-100px); }
   100% { transform: translateY(0); }
 }
+
+/* Join emojis falling from top */
+#join-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index:
