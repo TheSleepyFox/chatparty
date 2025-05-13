@@ -13,6 +13,8 @@ const activeUsers = {};
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
 
+  console.log(`👋 ${username} joined the chat`);
+  
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
 
