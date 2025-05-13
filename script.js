@@ -36,7 +36,7 @@ client.on('join', (channel, username, self) => {
 
 function startWandering(emoji) {
   let x = parseFloat(emoji.style.left);
-  const direction = Math.random() < 0.5 ? -1 : 1;
+  let direction = Math.random() < 0.5 ? -1 : 1;
 
   function wanderStep() {
     // Change direction randomly
