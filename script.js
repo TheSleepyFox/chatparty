@@ -85,7 +85,7 @@ function dropUser(username, emoji) {
 
   userDiv.appendChild(usernameDiv);
   userDiv.appendChild(emojiDiv);
-  container.appendChild(speechBubble);
+  userDiv.appendChild(speechBubble);
   container.appendChild(userDiv);
 
   activeUsers[usernameKey] = userDiv;
