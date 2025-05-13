@@ -16,25 +16,17 @@ client.on('message', (channel, tags, message, self) => {
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
 
-  // Detect new users when they send a message
-  if (!activeUsers[usernameKey]) {
-    console.log(`👋 ${username} chatted for the first time`);
-    const emoji = userEmojis[usernameKey] || "✨";
-    dropUser(username, emoji);
-  }
-
-  // Handle !emoji command
+  // !emoji 🐸 command
   if (message.startsWith('!emoji ')) {
     const newEmoji = message.split(' ')[1];
     if (newEmoji && newEmoji.length <= 2) {
       userEmojis[usernameKey] = newEmoji;
 
-      // Update emoji live if already on screen
+      // If already active, update the emoji
       const userDiv = activeUsers[usernameKey];
       if (userDiv) {
         const emojiDiv = userDiv.querySelector('.join-emoji');
-        if (emojiDiv) emojiDiv.src = `assets/idle.gif`; // or update your GIF logic
-        emojiDiv.alt = newEmoji;
+        if (emojiDiv) emojiDiv.textContent = newEmoji;
       }
     }
   }
