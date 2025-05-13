@@ -81,20 +81,20 @@ client.on('join', (channel, username, self) => {
 
 // === Wandering Behavior ===
 function startWandering(element) {
-  let x = parseFloat(element.style.left) || 0;
   let direction = Math.random() < 0.5 ? -1 : 1;
+  let speed = 0.1 + Math.random() * 0.2; // original was 0.2–0.4, now it's 0.1–0.3
+  let pos = parseFloat(element.style.left || "50");
 
-  function wanderStep() {
-    if (Math.random() < 0.05) {
+  function wander() {
+    pos += direction * speed;
+    if (pos < 0 || pos > 95) { // Bounce back if at edge
       direction *= -1;
+      pos = Math.max(0, Math.min(95, pos)); // Clamp
     }
 
-    x += direction * 0.5;
-    x = Math.max(0, Math.min(x, 95));
-    element.style.left = `${x}%`;
-
-    requestAnimationFrame(wanderStep);
+    element.style.left = `${pos}%`;
+    requestAnimationFrame(wander);
   }
 
-  wanderStep();
+  wander();
 }
