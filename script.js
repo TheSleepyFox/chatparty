@@ -124,34 +124,33 @@ function startWandering(element) {
   const img = element.querySelector(".join-emoji");
 
   function step() {
-    if userStates[usernameKey] != "idle"{
-      const direction = Math.random() < 0.5 ? -1 : 1;
-      const distance = 5 + Math.random() * 10; // 5–15%
-      const duration = 1000 + Math.random() * 1000;
-      const pauseDuration = 500 + Math.random() * 1500;
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    const distance = 5 + Math.random() * 10; // 5–15%
+    const duration = 1000 + Math.random() * 1000;
+    const pauseDuration = 500 + Math.random() * 1500;
 
-      const start = Date.now();
-      const startPos = pos;
-      const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
+    const start = Date.now();
+    const startPos = pos;
+    const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
 
-      // Update gif for movement direction
-      img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
+    // Update gif for movement direction
+    img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
 
-      function move() {
-        const now = Date.now();
-        const elapsed = now - start;
-        const t = Math.min(elapsed / duration, 1);
+    function move() {
+      const now = Date.now();
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
 
-        pos = startPos + (endPos - startPos) * t;
-        element.style.left = `${pos}%`;
+      pos = startPos + (endPos - startPos) * t;
+      element.style.left = `${pos}%`;
 
-        if (t < 1) {
-          requestAnimationFrame(move);
-        } else {
-          // Switch to idle gif while pausing
-          img.src = "assets/idle.gif";
-          setTimeout(step, pauseDuration);
-        }
+      if (t < 1) {
+        requestAnimationFrame(move);
+      } else {
+        // Switch to idle gif while pausing
+        img.src = "assets/idle.gif";
+        setTimeout(step, pauseDuration);
+      
       }
 
       move();
