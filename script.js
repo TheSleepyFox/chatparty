@@ -110,9 +110,12 @@ function dropUser(username, emoji) {
 
   // Start wandering after landing
   setTimeout(() => {
-    userDiv.style.animation = "";
+  userDiv.style.animation = "";
+
+  if (userStates[usernameKey] !== "idle") {
     startWandering(userDiv);
-  }, 1600);
+  }
+}, 1600);
 }
 
 // ========== Wandering With Random Steps and Pauses ==========
@@ -184,18 +187,17 @@ function setUserIdle(usernameKey) {
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
+  userStates[usernameKey] = "idle";
+
   const emojiImg = userDiv.querySelector(".join-emoji");
   if (emojiImg) {
-    emojiImg.src = "assets/away.gif"; // 👈 Replace with your real file path
+    emojiImg.src = "assets/away.gif";
   }
 
-  // Stop wandering by removing its animation loop
   if (userDiv._wanderingFrame) {
     cancelAnimationFrame(userDiv._wanderingFrame);
     userDiv._wanderingFrame = null;
   }
-
-  userStates[usernameKey] = "idle";
 }
 
 function wakeUserUp(usernameKey) {
