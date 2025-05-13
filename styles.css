@@ -24,16 +24,12 @@ body {
   top: -50px;
   font-size: 40px;
   white-space: nowrap;
-  animation: fall 2s ease-in-out forwards;
+  animation: fall 1.5s ease-in forwards;
+  z-index: 10;
 }
 
 @keyframes fall {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(85vh); opacity: 1; }
+}
 }
