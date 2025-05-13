@@ -85,16 +85,29 @@ function startWandering(emoji) {
 
 
 
-// Attach testDrop to the global window object so HTML can call it
 window.testDrop = function () {
   const container = document.getElementById('join-container');
+
   const emoji = document.createElement('div');
   emoji.className = 'join-emoji';
-  emoji.textContent = '🐸 test';
-  emoji.style.left = `${Math.random() * 90}%`;
+  emoji.textContent = '🐸';
+
+  const usernameDiv = document.createElement('div');
+  usernameDiv.className = 'join-username';
+  usernameDiv.textContent = 'TestUser';
+  usernameDiv.style.color = '#FF00FF';
+
+  const startX = Math.random() * 90;
+  emoji.style.left = `${startX}%`;
+  usernameDiv.style.left = `${startX}%`;
+
+  container.appendChild(usernameDiv);
   container.appendChild(emoji);
 
   setTimeout(() => {
-    emoji.remove();
-  }, 2500);
+    emoji.style.animation = '';
+    usernameDiv.style.animation = '';
+    startWandering(emoji);
+    startWandering(usernameDiv);
+  }, 1600);
 };
