@@ -82,19 +82,40 @@ client.on('join', (channel, username, self) => {
 // === Wandering Behavior ===
 function startWandering(element) {
   let direction = Math.random() < 0.5 ? -1 : 1;
-  let speed = 0.1 + Math.random() * 0.2; // original was 0.2–0.4, now it's 0.1–0.3
+  let speed = 0.1 + Math.random() * 0.2; // Slow speed
   let pos = parseFloat(element.style.left || "50");
+  let isPaused = false;
+  let pauseTimer = 0;
 
-  function wander() {
-    pos += direction * speed;
-    if (pos < 0 || pos > 95) { // Bounce back if at edge
-      direction *= -1;
-      pos = Math.max(0, Math.min(95, pos)); // Clamp
+  function wander(timestamp) {
+    if (isPaused) {
+      // Still paused
+      if (Date.now() > pauseTimer) {
+        isPaused = false;
+      }
+    } else {
+      // Move the element
+      pos += direction * speed;
+
+      // Bounce at edges
+      if (pos < 0 || pos > 95) {
+        direction *= -1;
+        pos = Math.max(0, Math.min(95, pos));
+      }
+
+      element.style.left = `${pos}%`;
+
+      // Random chance to pause
+      if (Math.random() < 0.005) { // ~0.5% chance per frame
+        isPaused = true;
+        pauseTimer = Date.now() + (500 + Math.random() * 1500); // pause 0.5–2 sec
+      }
     }
 
-    element.style.left = `${pos}%`;
     requestAnimationFrame(wander);
   }
 
   wander();
+}
+
 }
