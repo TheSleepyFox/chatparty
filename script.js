@@ -10,6 +10,15 @@ client.connect();
 const userEmojis = {};              // Stores username -> emoji
 const activeUsers = {};            // Stores username -> DOM container
 
+function testDrop(username = "TestUser", emoji = "🦊") {
+  const usernameKey = username.toLowerCase();
+
+  // If already active, remove to test from scratch
+  if (activeUsers[usernameKey]) {
+    activeUsers[usernameKey].remove();
+    delete activeUsers[usernameKey];
+  }
+
 // === Handle Chat Messages (for !emoji command) ===
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
@@ -118,82 +127,3 @@ function startWandering(element) {
 }
 
 
-const userEmojis = {};
-const activeUsers = {};
-
-function testDrop(username = "TestUser", emoji = "🦊") {
-  const usernameKey = username.toLowerCase();
-
-  // If already active, remove to test from scratch
-  if (activeUsers[usernameKey]) {
-    activeUsers[usernameKey].remove();
-    delete activeUsers[usernameKey];
-  }
-
-  const container = document.getElementById("join-container");
-
-  const userDiv = document.createElement("div");
-  userDiv.className = "user-container";
-  userDiv.style.position = "absolute";
-  userDiv.style.top = "-100px"; // start above screen
-  userDiv.style.left = `${Math.random() * 90}%`;
-
-  const usernameDiv = document.createElement("div");
-  usernameDiv.className = "join-username";
-  usernameDiv.textContent = username;
-  usernameDiv.style.color = "#00FFFF";
-
-  const emojiDiv = document.createElement("div");
-  emojiDiv.className = "join-emoji";
-  emojiDiv.textContent = emoji;
-
-  userDiv.appendChild(usernameDiv);
-  userDiv.appendChild(emojiDiv);
-  container.appendChild(userDiv);
-
-  activeUsers[usernameKey] = userDiv;
-
-  // Animate fall
-  userDiv.style.animation = "fall 1.6s ease-out forwards";
-
-  // Start wandering after fall ends
-  setTimeout(() => {
-    userDiv.style.animation = "";
-    startWandering(userDiv);
-  }, 1600);
-}
-
-// Wandering with random steps and pauses
-function startWandering(element) {
-  let pos = parseFloat(element.style.left || "50");
-
-  function step() {
-    const direction = Math.random() < 0.5 ? -1 : 1;
-    const distance = 5 + Math.random() * 10; // 5–15%
-    const duration = 1000 + Math.random() * 1000;
-    const pauseDuration = 500 + Math.random() * 1500;
-
-    const start = Date.now();
-    const startPos = pos;
-    const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
-
-    function move() {
-      const now = Date.now();
-      const elapsed = now - start;
-      const t = Math.min(elapsed / duration, 1);
-
-      pos = startPos + (endPos - startPos) * t;
-      element.style.left = `${pos}%`;
-
-      if (t < 1) {
-        requestAnimationFrame(move);
-      } else {
-        setTimeout(step, pauseDuration);
-      }
-    }
-
-    move();
-  }
-
-  step();
-}
