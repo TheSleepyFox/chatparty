@@ -16,10 +16,10 @@ const userStates = {}; // usernameKey -> 'active' or 'idle'
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
 
-  resetIdleTimer(usernameKey);
-
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
+
+  resetIdleTimer(usernameKey);
 
   // Drop the user if not yet active
   if (!activeUsers[usernameKey]) {
@@ -74,10 +74,11 @@ client.on('join', (channel, username, self) => {
 
 // ========== Drop User Emoji ==========
 function dropUser(username, emoji) {
-  resetIdleTimer(usernameKey);
 
   const usernameKey = username.toLowerCase();
   const container = document.getElementById("join-container");
+
+  resetIdleTimer(usernameKey);
 
   const userDiv = document.createElement("div");
   userDiv.className = "user-container";
