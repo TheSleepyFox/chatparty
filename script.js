@@ -14,40 +14,36 @@ client.on('join', (channel, username, self) => {
   if (self) return;
 
   const container = document.getElementById('join-container');
+
   const emoji = document.createElement('div');
   emoji.className = 'join-emoji';
+  emoji.textContent = '🐸';
 
-  const emojis = ['👋', '🎉', '🔥', '🐸', '💥'];
-  emoji.textContent = `${emojis[Math.floor(Math.random() * emojis.length)]}`;
-
-  // Create a username div
   const usernameDiv = document.createElement('div');
   usernameDiv.className = 'join-username';
   usernameDiv.textContent = username;
 
-  // Get the user's color from Twitch chat
-  const userColor = getColorForUsername(username); // Function to get the color
+  // Set username color (can be dynamic later)
+  usernameDiv.style.color = '#00FFFF';
 
-  // Set the username color
-  usernameDiv.style.color = userColor || 'white'; // Fallback to white if no color
-
-  // Append username div above emoji
-  container.appendChild(usernameDiv);
-  container.appendChild(emoji);
-
-  // Random horizontal start position
+  // Initial position
   const startX = Math.random() * 90;
   emoji.style.left = `${startX}%`;
   usernameDiv.style.left = `${startX}%`;
 
-  // After falling, make it wander
+  // Add both to container
+  container.appendChild(usernameDiv);
+  container.appendChild(emoji);
+
+  // After drop, start wandering
   setTimeout(() => {
-    emoji.style.animation = ''; // Stop fall animation
-    usernameDiv.style.animation = ''; // Stop fade for the username
+    emoji.style.animation = '';
+    usernameDiv.style.animation = '';
     startWandering(emoji);
-    startWandering(usernameDiv); // Make username wander too
+    startWandering(usernameDiv);
   }, 1600);
 });
+
 
 function getColorForUsername(username) {
   // Example color assignment - could be dynamic based on your own needs

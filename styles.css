@@ -30,12 +30,12 @@ body {
 
 .join-username {
   position: absolute;
-  font-size: 20px;
-  color: white; /* Default color */
+  font-size: 16px;
   font-weight: bold;
+  color: white; /* Will be overridden by JS */
   text-align: center;
-  margin-bottom: 10px; /* Space between username and emoji */
-  z-index: 11; /* Make sure it's above the emoji */
+  transform: translateY(-20px); /* Move above the emoji */
+  z-index: 11;
   animation: fadeIn 1s ease-out forwards;
 }
 
