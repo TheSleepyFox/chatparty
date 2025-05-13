@@ -19,8 +19,6 @@ client.on('message', (channel, tags, message, self) => {
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
 
-  resetIdleTimer(usernameKey);
-
   // Drop the user if not yet active
   if (!activeUsers[usernameKey]) {
     const emoji = userEmojis[usernameKey] || "✨";
@@ -59,7 +57,6 @@ client.on('message', (channel, tags, message, self) => {
     }
   }
 });
-
 
 // ========== Handle User Join ==========
 client.on('join', (channel, username, self) => {
@@ -159,7 +156,6 @@ function startWandering(element) {
   step();
 }
 
-
 // ========== Test Drop Button Function ==========
 function testDrop() {
   const testUser = "TestUser" + Math.floor(Math.random() * 1000);
@@ -167,7 +163,6 @@ function testDrop() {
   userEmojis[testUser.toLowerCase()] = emoji;
   dropUser(testUser, emoji);
 }
-
 
 // ========== Idle Timer Function ==========
 function resetIdleTimer(usernameKey) {
@@ -183,7 +178,6 @@ function resetIdleTimer(usernameKey) {
     setUserIdle(usernameKey);
   }, 30000);
 }
-
 
 // ========== Away Function ==========
 function setUserIdle(usernameKey) {
