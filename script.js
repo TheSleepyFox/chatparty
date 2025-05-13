@@ -121,5 +121,3 @@ function startWandering(element) {
   wander();
 }
 
-
-}
