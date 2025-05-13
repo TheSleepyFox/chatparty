@@ -119,62 +119,45 @@ function dropUser(username, emoji) {
 }
 
 // ========== Wandering With Random Steps and Pauses ==========
-function startWandering(userDiv) {
-  const usernameKey = Object.keys(activeUsers).find(
-    key => activeUsers[key] === userDiv
-  );
-
-  // ✅ Prevent wandering if user is idle
-  if (userStates[usernameKey] === "idle") return;
-
-  let direction = Math.random() < 0.5 ? -1 : 1;
-  let distance = Math.random() * 100 + 50; // pixels
-  let speed = 0.5; // pixels per frame
-  let moved = 0;
-
-  const emojiImg = userDiv.querySelector(".join-emoji");
-  if (emojiImg) {
-    emojiImg.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
-  }
+function startWandering(element) {
+  let pos = parseFloat(element.style.left || "50");
+  const img = element.querySelector(".join-emoji");
 
   function step() {
-    // ❗ Cancel if user became idle mid-wander
-    if (userStates[usernameKey] === "idle") return;
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    const distance = 5 + Math.random() * 10; // 5–15%
+    const duration = 1000 + Math.random() * 1000;
+    const pauseDuration = 500 + Math.random() * 1500;
 
-    let currentLeft = parseFloat(userDiv.style.left || "0");
-    let containerWidth = window.innerWidth;
-    let elementWidth = userDiv.offsetWidth;
+    const start = Date.now();
+    const startPos = pos;
+    const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
 
-    currentLeft += direction * speed;
-    moved += speed;
+    // Update gif for movement direction
+    img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
 
-    // Boundaries
-    if (currentLeft < 0) currentLeft = 0;
-    if (currentLeft > containerWidth - elementWidth) {
-      currentLeft = containerWidth - elementWidth;
-      direction *= -1; // bounce
-      moved = 0;
+    function move() {
+      const now = Date.now();
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+
+      pos = startPos + (endPos - startPos) * t;
+      element.style.left = `${pos}%`;
+
+      if (t < 1) {
+        requestAnimationFrame(move);
+      } else {
+        // Switch to idle gif while pausing
+        img.src = "assets/idle.gif";
+        setTimeout(step, pauseDuration);
+      }
     }
 
-    userDiv.style.left = `${currentLeft}px`;
-
-    if (moved < distance) {
-      userDiv._wanderingFrame = requestAnimationFrame(step);
-    } else {
-      // Pause and restart after delay
-      emojiImg.src = "assets/idle.gif";
-      setTimeout(() => {
-        // Only restart if user is still active
-        if (userStates[usernameKey] === "active") {
-          startWandering(userDiv); // 🔁 restart wandering
-        }
-      }, 1000 + Math.random() * 2000);
-    }
+    move();
   }
 
   step();
 }
-
 
 // ========== Test Drop Button Function ==========
 function testDrop() {
