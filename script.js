@@ -36,8 +36,6 @@ client.on('message', (channel, tags, message, self) => {
 client.on('join', (channel, username, self) => {
   if (self) return;
 
-   console.log(`👋 ${username} joined the chat`);
-
   const usernameKey = username.toLowerCase();
   if (activeUsers[usernameKey]) return; // Don't duplicate
 
@@ -48,42 +46,44 @@ client.on('join', (channel, username, self) => {
 // ========== Drop User Emoji ==========
 function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
+  const container = document.getElementById("join-container");
 
-  const container = document.createElement("div");
-  container.className = "user-container";
-  container.style.left = Math.random() * 80 + "%";
-  container.style.top = "-100px";
-  container.style.position = "absolute";
+  const userDiv = document.createElement("div");
+  userDiv.className = "user-container";
+  userDiv.style.position = "absolute";
+  userDiv.style.top = "-100px";
+  userDiv.style.left = `${Math.random() * 90}%`;
 
-  const nameDiv = document.createElement("div");
-  nameDiv.className = "join-username";
-  nameDiv.textContent = username;
+  const usernameDiv = document.createElement("div");
+  usernameDiv.className = "join-username";
+  usernameDiv.textContent = username;
+  usernameDiv.style.color = "#00FFFF"; // Optional: tags.color
 
-  const emojiImg = document.createElement("img");
-  emojiImg.className = "join-emoji";
-  emojiImg.src = "assets/idle.gif";
-  emojiImg.alt = emoji;
+  const emojiDiv = document.createElement("img");
+  emojiDiv.className = "join-emoji";
+  emojiDiv.src = "assets/idle.gif"; // default to idle gif
+  emojiDiv.alt = emoji; // optional: fallback emoji
 
-  container.appendChild(nameDiv);
-  container.appendChild(emojiImg);
+  userDiv.appendChild(usernameDiv);
+  userDiv.appendChild(emojiDiv);
+  container.appendChild(userDiv);
 
-  document.getElementById("join-container").appendChild(container);
-  activeUsers[usernameKey] = container;
+  activeUsers[usernameKey] = userDiv;
 
-  // 👇 Fall animation starts immediately
-  container.style.animation = "fall 0.8s ease-out forwards";
+  // Fall animation
+  userDiv.style.animation = "fall 1.6s ease-out forwards";
 
-  // After it lands, start wandering
+  // Start wandering after landing
   setTimeout(() => {
-    container.style.animation = "";
-    startWandering(container);
-  }, 800); // Match animation duration
+    userDiv.style.animation = "";
+    startWandering(userDiv);
+  }, 1600);
 }
-
 
 // ========== Wandering With Random Steps and Pauses ==========
 function startWandering(element) {
   let pos = parseFloat(element.style.left || "50");
+  const img = element.querySelector(".join-emoji");
 
   function step() {
     const direction = Math.random() < 0.5 ? -1 : 1;
@@ -94,6 +94,9 @@ function startWandering(element) {
     const start = Date.now();
     const startPos = pos;
     const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
+
+    // Update gif for movement direction
+    img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
 
     function move() {
       const now = Date.now();
@@ -106,6 +109,8 @@ function startWandering(element) {
       if (t < 1) {
         requestAnimationFrame(move);
       } else {
+        // Switch to idle gif while pausing
+        img.src = "assets/idle.gif";
         setTimeout(step, pauseDuration);
       }
     }
@@ -115,6 +120,7 @@ function startWandering(element) {
 
   step();
 }
+
 
 // ========== Test Drop Button Function ==========
 function testDrop() {
