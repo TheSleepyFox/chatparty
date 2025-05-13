@@ -36,6 +36,8 @@ client.on('message', (channel, tags, message, self) => {
 client.on('join', (channel, username, self) => {
   if (self) return;
 
+   console.log(`👋 ${username} joined the chat`);
+
   const usernameKey = username.toLowerCase();
   if (activeUsers[usernameKey]) return; // Don't duplicate
 
@@ -46,38 +48,38 @@ client.on('join', (channel, username, self) => {
 // ========== Drop User Emoji ==========
 function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
-  const container = document.getElementById("join-container");
 
-  const userDiv = document.createElement("div");
-  userDiv.className = "user-container";
-  userDiv.style.position = "absolute";
-  userDiv.style.top = "-100px";
-  userDiv.style.left = `${Math.random() * 90}%`;
+  const container = document.createElement("div");
+  container.className = "user-container";
+  container.style.left = Math.random() * 80 + "%";
+  container.style.top = "-100px";
+  container.style.position = "absolute";
 
-  const usernameDiv = document.createElement("div");
-  usernameDiv.className = "join-username";
-  usernameDiv.textContent = username;
-  usernameDiv.style.color = "#00FFFF"; // Optional: tags.color
+  const nameDiv = document.createElement("div");
+  nameDiv.className = "join-username";
+  nameDiv.textContent = username;
 
-  const emojiDiv = document.createElement("div");
-  emojiDiv.className = "join-emoji";
-  emojiDiv.textContent = emoji;
+  const emojiImg = document.createElement("img");
+  emojiImg.className = "join-emoji";
+  emojiImg.src = "assets/idle.gif";
+  emojiImg.alt = emoji;
 
-  userDiv.appendChild(usernameDiv);
-  userDiv.appendChild(emojiDiv);
-  container.appendChild(userDiv);
+  container.appendChild(nameDiv);
+  container.appendChild(emojiImg);
 
-  activeUsers[usernameKey] = userDiv;
+  document.getElementById("join-container").appendChild(container);
+  activeUsers[usernameKey] = container;
 
-  // Fall animation
-  userDiv.style.animation = "fall 1.6s ease-out forwards";
+  // 👇 Fall animation starts immediately
+  container.style.animation = "fall 0.8s ease-out forwards";
 
-  // Start wandering after landing
+  // After it lands, start wandering
   setTimeout(() => {
-    userDiv.style.animation = "";
-    startWandering(userDiv);
-  }, 1600);
+    container.style.animation = "";
+    startWandering(container);
+  }, 800); // Match animation duration
 }
+
 
 // ========== Wandering With Random Steps and Pauses ==========
 function startWandering(element) {
