@@ -15,36 +15,37 @@ client.on('join', (channel, username, self) => {
 
   const container = document.getElementById('join-container');
 
-  // Create wrapper
+  // Create a container for the user
   const userDiv = document.createElement('div');
   userDiv.className = 'user-container';
 
-  // Create username div
+  // Username element
   const usernameDiv = document.createElement('div');
   usernameDiv.className = 'join-username';
   usernameDiv.textContent = username;
-  usernameDiv.style.color = '#00FFFF'; // You can replace with dynamic color
+  usernameDiv.style.color = '#00FFFF'; // Test color — will show up
 
-  // Create emoji div
+  // Emoji element
   const emoji = document.createElement('div');
   emoji.className = 'join-emoji';
   emoji.textContent = '🐸';
 
-  // Build the structure
+  // Assemble
   userDiv.appendChild(usernameDiv);
   userDiv.appendChild(emoji);
   container.appendChild(userDiv);
 
-  // Position horizontally
+  // Position
   const startX = Math.random() * 90;
   userDiv.style.left = `${startX}%`;
 
-  // Animate after fall
+  // After drop, wander
   setTimeout(() => {
     userDiv.style.animation = '';
     startWandering(userDiv);
   }, 1600);
 });
+
 
 
 function startWandering(element) {
@@ -67,3 +68,29 @@ function startWandering(element) {
   wanderStep();
 }
 
+window.testDrop = function () {
+  const container = document.getElementById('join-container');
+  const userDiv = document.createElement('div');
+  userDiv.className = 'user-container';
+
+  const usernameDiv = document.createElement('div');
+  usernameDiv.className = 'join-username';
+  usernameDiv.textContent = 'TestUser';
+  usernameDiv.style.color = '#FF00FF';
+
+  const emoji = document.createElement('div');
+  emoji.className = 'join-emoji';
+  emoji.textContent = '🐸';
+
+  userDiv.appendChild(usernameDiv);
+  userDiv.appendChild(emoji);
+  container.appendChild(userDiv);
+
+  const startX = Math.random() * 90;
+  userDiv.style.left = `${startX}%`;
+
+  setTimeout(() => {
+    userDiv.style.animation = '';
+    startWandering(userDiv);
+  }, 1600);
+};
