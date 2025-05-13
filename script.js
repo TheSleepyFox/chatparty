@@ -78,8 +78,6 @@ function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
   const container = document.getElementById("join-container");
 
-  resetIdleTimer(usernameKey);
-
   const userDiv = document.createElement("div");
   userDiv.className = "user-container";
   userDiv.style.position = "absolute";
@@ -107,6 +105,8 @@ function dropUser(username, emoji) {
   container.appendChild(userDiv);
 
   activeUsers[usernameKey] = userDiv;
+
+  resetIdleTimer(usernameKey);
 
   // Fall animation
   userDiv.style.animation = "fall 1.6s ease-out forwards";
