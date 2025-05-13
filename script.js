@@ -150,11 +150,10 @@ function startWandering(element) {
         // Switch to idle gif while pausing
         img.src = "assets/idle.gif";
         setTimeout(step, pauseDuration);
-      
       }
-
-      move();
     }
+
+    move();
   }
 
   step();
@@ -188,7 +187,7 @@ function setUserIdle(usernameKey) {
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
-  userStates[usernameKey] = "idle";
+  userStates[usernameKey] = "idle"; // ✅ Set this early
 
   const emojiImg = userDiv.querySelector(".join-emoji");
   if (emojiImg) {
