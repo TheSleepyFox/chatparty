@@ -1,7 +1,7 @@
 // ========== Twitch Chat Setup ==========
 const client = new tmi.Client({
   connection: { secure: true, reconnect: true },
-  channels: ['your_channel_name_here'] // replace with your Twitch channel name
+  channels: ['thesleepyfox'] // replace with your Twitch channel name
 });
 
 client.connect();
