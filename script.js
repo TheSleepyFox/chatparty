@@ -36,7 +36,8 @@ client.on('join', (channel, username, self) => {
   }, 2500);
 });
 
-function testDrop() {
+// Attach testDrop to the global window object so HTML can call it
+window.testDrop = function () {
   const container = document.getElementById('join-container');
   const emoji = document.createElement('div');
   emoji.className = 'join-emoji';
@@ -47,4 +48,4 @@ function testDrop() {
   setTimeout(() => {
     emoji.remove();
   }, 2500);
-}
+};
