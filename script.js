@@ -81,43 +81,40 @@ client.on('join', (channel, username, self) => {
 
 // === Wandering Behavior ===
 function startWandering(element) {
-  let direction = Math.random() < 0.5 ? -1 : 1;
-  let speed = 0.1 + Math.random() * 0.2; // Slower movement
   let pos = parseFloat(element.style.left || "50");
-  let isPaused = false;
-  let pauseUntil = 0;
 
-  function wander() {
-    const now = Date.now();
+  function step() {
+    // Pick random direction and distance
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    const distance = 5 + Math.random() * 10; // move 5–15% of screen width
+    const duration = 1000 + Math.random() * 1000; // 1–2 seconds
+    const pauseDuration = 500 + Math.random() * 1500; // 0.5–2 sec
 
-    if (isPaused) {
-      // Still within pause window
-      if (now >= pauseUntil) {
-        isPaused = false;
-      }
-    }
+    const start = Date.now();
+    const startPos = pos;
+    const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
 
-    if (!isPaused) {
-      pos += direction * speed;
+    function move() {
+      const now = Date.now();
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1); // progress from 0 to 1
 
-      // Bounce at edges
-      if (pos < 0 || pos > 95) {
-        direction *= -1;
-        pos = Math.max(0, Math.min(95, pos));
-      }
-
+      // Simple linear interpolation
+      pos = startPos + (endPos - startPos) * t;
       element.style.left = `${pos}%`;
 
-      // Random chance to pause
-      if (Math.random() < 0.5) {
-        isPaused = true;
-        pauseUntil = now + (500 + Math.random() * 1500); // 0.5–2 sec
+      if (t < 1) {
+        requestAnimationFrame(move);
+      } else {
+        // Pause, then take next step
+        setTimeout(step, pauseDuration);
       }
     }
 
-    requestAnimationFrame(wander);
+    move();
   }
 
-  wander();
+  step(); // start the first wandering step
 }
+
 
