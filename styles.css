@@ -1,37 +1,27 @@
-/* General body style */
-body {
-  background: transparent;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Jumping emoji */
-#emoji {
-  font-size: 100px;
-  z-index: 5;
-  position: relative;
-}
-
-.jump {
-  animation: jumpAnim 0.6s ease;
-}
-
-@keyframes jumpAnim {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-100px); }
-  100% { transform: translateY(0); }
-}
-
-/* Join emojis falling from top */
 #join-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  pointer-events: none;
-  z-index:
+  pointer-events: none; /* Let clicks pass through */
+  z-index: 10;
+}
+
+.join-emoji {
+  position: absolute;
+  top: -50px;
+  font-size: 40px;
+  animation: fall 2s ease-in-out forwards;
+  white-space: nowrap;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
