@@ -224,7 +224,7 @@ function resetIdleTimer(usernameKey) {
   // Mark user idle after 30 seconds of inactivity
   userTimers[usernameKey] = setTimeout(() => {
     setUserIdle(usernameKey);
-  }, 30000);
+  }, 180000);
 }
 
 function setUserIdle(usernameKey) {
