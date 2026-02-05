@@ -2,7 +2,7 @@
 // ========== UI VERSION LABEL ===============================
 // ==========================================================
 
-const VERSION_LABEL = "js v0.01";
+const VERSION_LABEL = "js v0.02";
 
 const testDropBtn = document.getElementById("test-drop-btn");
 if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
