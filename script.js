@@ -1,17 +1,13 @@
-/************************************************************
- * TWITCH CHAT OVERLAY – WANDERING CHAT AVATARS
- * ----------------------------------------------------------
- * Listens to Twitch chat and spawns on-screen avatars that:
- *  - Drop in when users join or speak
- *  - Wander randomly along the screen
- *  - Display speech bubbles on chat
- *  - Go idle after inactivity
- *
- * NOTE:
- * Emoji / skin selection has been intentionally removed.
- * This will be reintroduced later in a more meaningful way.
- ************************************************************/
+// ==========================================================
+// ========== UI VERSION LABEL ===============================
+// ==========================================================
 
+const VERSION_LABEL = "js v0.01";
+
+const testDropBtn = document.getElementById("test-drop-btn");
+if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
+  testDropBtn.textContent += ` ${VERSION_LABEL}`;
+}
 
 // ==========================================================
 // ========== TWITCH CHAT CLIENT SETUP ======================
