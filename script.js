@@ -251,6 +251,4 @@ function wakeUserUp(usernameKey) {
   startWandering(userDiv); // ✅ safe to call again
 }
 
-  startWandering(userDiv);
-  userStates[usernameKey] = "active";
-}
+
