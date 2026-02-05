@@ -12,6 +12,14 @@ const activeUsers = {};
 const userTimers = {}; // usernameKey -> timeout ID
 const userStates = {}; // usernameKey -> 'active' or 'idle'
 
+
+// ========== Version ID ==========
+const testDropBtn = document.getElementById("test-drop-btn");
+
+if (testDropBtn && !testDropBtn.textContent.includes("js v0.01")) {
+  testDropBtn.textContent += " js v0.01";
+}
+
 // ========== Handle Chat Messages ==========
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
