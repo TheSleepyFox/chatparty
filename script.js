@@ -95,6 +95,7 @@ client.on('join', (channel, username, self) => {
 // ==========================================================
 
 function dropUser(username) {
+  console.log("Dropped user:", username);
   const usernameKey = username.toLowerCase();
   const container = document.getElementById("join-container");
 
@@ -150,16 +151,20 @@ function dropUser(username) {
 // ==========================================================
 // ========== RANDOM WANDERING BEHAVIOR ======================
 // ==========================================================
-
 function startWandering(element) {
-  element._isWandering = true;
+  // Prevent multiple wandering loops
+  if (element._isWandering) return;
+
+  element._isWandering = true; // ✅ THIS WAS MISSING
+
   let pos = parseFloat(element.style.left || "50");
   const img = element.querySelector(".join-emoji");
 
   function step() {
     if (!element._isWandering) return;
+
     const direction = Math.random() < 0.5 ? -1 : 1;
-    const distance = 5 + Math.random() * 10; // 5–15%
+    const distance = 5 + Math.random() * 10;
     const duration = 1000 + Math.random() * 1000;
     const pauseDuration = 500 + Math.random() * 1500;
 
@@ -167,11 +172,11 @@ function startWandering(element) {
     const startPos = pos;
     const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
 
-    // Set walking animation
     img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
 
     function move() {
       if (!element._isWandering) return;
+
       const elapsed = Date.now() - startTime;
       const t = Math.min(elapsed / duration, 1);
 
@@ -181,7 +186,6 @@ function startWandering(element) {
       if (t < 1) {
         requestAnimationFrame(move);
       } else {
-        // Pause and idle
         img.src = "assets/idle.gif";
         setTimeout(step, pauseDuration);
       }
@@ -192,6 +196,7 @@ function startWandering(element) {
 
   step();
 }
+
 
 
 // ==========================================================
@@ -227,25 +232,23 @@ function setUserIdle(usernameKey) {
   if (!userDiv) return;
 
   userStates[usernameKey] = "idle";
-  userDiv._isWandering = false;
+  userDiv._isWandering = false; // ✅ stops loop
 
   const img = userDiv.querySelector(".join-emoji");
-  if (img) {
-    img.src = "assets/away.gif";
-  }
+  if (img) img.src = "assets/away.gif";
 }
+
 
 function wakeUserUp(usernameKey) {
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
   userStates[usernameKey] = "active";
-  startWandering(userDiv);
 
   const img = userDiv.querySelector(".join-emoji");
-  if (img) {
-    img.src = "assets/idle.gif";
-  }
+  if (img) img.src = "assets/idle.gif";
+
+  startWandering(userDiv); // ✅ safe to call again
 }
 
   startWandering(userDiv);
