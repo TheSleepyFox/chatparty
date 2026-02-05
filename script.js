@@ -152,10 +152,12 @@ function dropUser(username) {
 // ==========================================================
 
 function startWandering(element) {
+  element._isWandering = true;
   let pos = parseFloat(element.style.left || "50");
   const img = element.querySelector(".join-emoji");
 
   function step() {
+    if (!element._isWandering) return;
     const direction = Math.random() < 0.5 ? -1 : 1;
     const distance = 5 + Math.random() * 10; // 5–15%
     const duration = 1000 + Math.random() * 1000;
@@ -169,6 +171,7 @@ function startWandering(element) {
     img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
 
     function move() {
+      if (!element._isWandering) return;
       const elapsed = Date.now() - startTime;
       const t = Math.min(elapsed / duration, 1);
 
@@ -224,6 +227,7 @@ function setUserIdle(usernameKey) {
   if (!userDiv) return;
 
   userStates[usernameKey] = "idle";
+  userDiv._isWandering = false;
 
   const img = userDiv.querySelector(".join-emoji");
   if (img) {
@@ -235,10 +239,14 @@ function wakeUserUp(usernameKey) {
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
+  userStates[usernameKey] = "active";
+  startWandering(userDiv);
+
   const img = userDiv.querySelector(".join-emoji");
   if (img) {
     img.src = "assets/idle.gif";
   }
+}
 
   startWandering(userDiv);
   userStates[usernameKey] = "active";
