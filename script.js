@@ -308,7 +308,7 @@ function spawnPoofAtUser(userDiv) {
 
   const poof = document.createElement("img");
   poof.className = "join-emoji";
-  poof.src = "assets/poof.gif";
+  poofImg.src = `assets/poof.gif?${Date.now()}`;
   poof.style.position = "absolute";
   poof.style.left = `${rect.left - containerRect.left}px`;
   poof.style.top = `${rect.top - containerRect.top}px`;
