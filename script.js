@@ -1,13 +1,8 @@
-// ==========================================================
-// ========== UI VERSION LABEL ===============================
-// ==========================================================
+/************************************************************
+ * TWITCH CHAT OVERLAY – WANDERING CHAT AVATARS
+ * js v0.03
+ ************************************************************/
 
-const VERSION_LABEL = "js v0.02";
-
-const testDropBtn = document.getElementById("test-drop-btn");
-if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
-  testDropBtn.textContent += ` ${VERSION_LABEL}`;
-}
 
 // ==========================================================
 // ========== TWITCH CHAT CLIENT SETUP ======================
@@ -18,24 +13,19 @@ const client = new tmi.Client({
     secure: true,
     reconnect: true
   },
-  channels: ['thesleepyfox'] // Replace with your channel
+  channels: ['thesleepyfox'] // change if needed
 });
 
 client.connect();
 
 
 // ==========================================================
-// ========== GLOBAL STATE STORAGE ===========================
+// ========== GLOBAL STATE =================================
 // ==========================================================
 
-// Active user DOM references
 const activeUsers = {}; // usernameKey -> userDiv
-
-// Inactivity timers
-const userTimers = {}; // usernameKey -> timeout ID
-
-// Simple presence state
-const userStates = {}; // usernameKey -> "active" | "idle"
+const userTimers  = {}; // usernameKey -> timeout ID
+const userStates  = {}; // usernameKey -> "active" | "idle"
 
 
 // ==========================================================
@@ -48,16 +38,14 @@ client.on('message', (channel, tags, message, self) => {
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
 
-  // Spawn user if they are not already active
+  // Spawn user if missing
   if (!activeUsers[usernameKey]) {
     dropUser(username);
   }
 
   const userDiv = activeUsers[usernameKey];
 
-  // --------------------------------------------------------
-  // Speech bubble display
-  // --------------------------------------------------------
+  // Speech bubble
   if (userDiv) {
     const bubble = userDiv.querySelector(".speech-bubble");
     if (bubble) {
@@ -71,7 +59,6 @@ client.on('message', (channel, tags, message, self) => {
     }
   }
 
-  // Reset idle timer on activity
   resetIdleTimer(usernameKey);
 });
 
@@ -91,71 +78,60 @@ client.on('join', (channel, username, self) => {
 
 
 // ==========================================================
-// ========== USER SPAWN / DROP-IN ===========================
+// ========== USER SPAWN ====================================
 // ==========================================================
 
 function dropUser(username) {
-  console.log("Dropped user:", username);
   const usernameKey = username.toLowerCase();
   const container = document.getElementById("join-container");
+  if (!container) return;
 
-  // Root container for this avatar
   const userDiv = document.createElement("div");
   userDiv.className = "user-container";
   userDiv.style.position = "absolute";
-  userDiv.style.top = "-100px"; // Start off-screen
+  userDiv.style.top = "-100px";
   userDiv.style.left = `${Math.random() * 90}%`;
 
-  // Username label
   const usernameDiv = document.createElement("div");
   usernameDiv.className = "join-username";
   usernameDiv.textContent = username;
-  usernameDiv.style.color = "#00FFFF"; // Optional: tags.color
+  usernameDiv.style.color = "#00FFFF";
 
-  // Avatar image (animated GIFs)
   const avatarImg = document.createElement("img");
   avatarImg.className = "join-emoji";
-  avatarImg.src = "assets/idle.gif"; // Default idle animation
+  avatarImg.src = "assets/idle.gif";
 
-  // Speech bubble (hidden until user speaks)
   const speechBubble = document.createElement("div");
   speechBubble.className = "speech-bubble";
   speechBubble.style.display = "none";
 
-  // Assemble DOM
   userDiv.append(usernameDiv, avatarImg, speechBubble);
   container.appendChild(userDiv);
 
-  // Track user
   activeUsers[usernameKey] = userDiv;
   userStates[usernameKey] = "active";
 
-  // Begin inactivity tracking
   resetIdleTimer(usernameKey);
 
-  // --------------------------------------------------------
   // Drop-in animation
-  // --------------------------------------------------------
   userDiv.style.animation = "fall 1.6s ease-out forwards";
 
-  // Start wandering after landing
   setTimeout(() => {
     userDiv.style.animation = "";
-    if (userStates[usernameKey] !== "idle") {
-      startWandering(userDiv);
-    }
+    startWandering(userDiv);
   }, 1600);
 }
 
 
 // ==========================================================
-// ========== RANDOM WANDERING BEHAVIOR ======================
+// ========== WANDERING LOGIC ================================
 // ==========================================================
+
 function startWandering(element) {
-  // Prevent multiple wandering loops
+  // Prevent multiple loops
   if (element._isWandering) return;
 
-  element._isWandering = true; // ✅ THIS WAS MISSING
+  element._isWandering = true;
 
   let pos = parseFloat(element.style.left || "50");
   const img = element.querySelector(".join-emoji");
@@ -198,33 +174,22 @@ function startWandering(element) {
 }
 
 
-
-// ==========================================================
-// ========== DEV TEST HELPER ================================
-// ==========================================================
-
-function testDrop() {
-  const testUser = "TestUser" + Math.floor(Math.random() * 1000);
-  dropUser(testUser);
-}
-
-
 // ==========================================================
 // ========== IDLE / AWAY LOGIC ==============================
 // ==========================================================
 
+const IDLE_TIMEOUT_MS = 30 * 1000;
+
 function resetIdleTimer(usernameKey) {
   clearTimeout(userTimers[usernameKey]);
 
-  // Wake user if they were idle
   if (userStates[usernameKey] === "idle") {
     wakeUserUp(usernameKey);
   }
 
-  // Mark user idle after 30 seconds of inactivity
   userTimers[usernameKey] = setTimeout(() => {
     setUserIdle(usernameKey);
-  }, 1800000);
+  }, IDLE_TIMEOUT_MS);
 }
 
 function setUserIdle(usernameKey) {
@@ -232,12 +197,11 @@ function setUserIdle(usernameKey) {
   if (!userDiv) return;
 
   userStates[usernameKey] = "idle";
-  userDiv._isWandering = false; // ✅ stops loop
+  userDiv._isWandering = false;
 
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/away.gif";
 }
-
 
 function wakeUserUp(usernameKey) {
   const userDiv = activeUsers[usernameKey];
@@ -248,7 +212,27 @@ function wakeUserUp(usernameKey) {
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/idle.gif";
 
-  startWandering(userDiv); // ✅ safe to call again
+  startWandering(userDiv);
 }
 
 
+// ==========================================================
+// ========== DEV TEST BUTTON ================================
+// ==========================================================
+
+function testDrop() {
+  const testUser = "TestUser" + Math.floor(Math.random() * 1000);
+  dropUser(testUser);
+}
+
+
+// ==========================================================
+// ========== VERSION LABEL =================================
+// ==========================================================
+
+const VERSION_LABEL = "js v0.03";
+
+const testDropBtn = document.getElementById("test-drop-btn");
+if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
+  testDropBtn.textContent += ` ${VERSION_LABEL}`;
+}
