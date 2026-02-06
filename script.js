@@ -9,10 +9,7 @@
 // ==========================================================
 
 const client = new tmi.Client({
-  connection: {
-    secure: true,
-    reconnect: true
-  },
+  connection: { secure: true, reconnect: true },
   channels: ['thesleepyfox']
 });
 
@@ -23,10 +20,10 @@ client.connect();
 // ========== GLOBAL STATE =================================
 // ==========================================================
 
-const activeUsers = {};         // usernameKey -> userDiv
-const userTimers = {};          // idle timers
-const userRemovalTimers = {};   // removal timers
-const userStates = {};          // "active" | "idle" | "lurking"
+const activeUsers = {};
+const userIdleTimers = {};
+const userRemovalTimers = {};
+const userStates = {}; // "active" | "idle" | "lurking"
 
 
 // ==========================================================
@@ -52,8 +49,8 @@ function updateUserZIndex(usernameKey) {
 // ========== TIMEOUT CONFIG ================================
 // ==========================================================
 
-const IDLE_TIMEOUT_MS   = 30 * 1000; // 30 seconds
-const REMOVE_TIMEOUT_MS = 60 * 1000; // 60 seconds
+const IDLE_TIMEOUT_MS   = 30 * 1000;
+const REMOVE_TIMEOUT_MS = 60 * 1000;
 
 
 // ==========================================================
@@ -73,12 +70,15 @@ client.on('message', (channel, tags, message, self) => {
   // ---- !lurk command ------------------------------------
   if (message.trim().toLowerCase() === "!lurk") {
     setUserLurking(usernameKey);
-    resetRemovalTimer(usernameKey);
     return;
   }
 
-  const userDiv = activeUsers[usernameKey];
+  // If they talk while lurking → wake them
+  if (userStates[usernameKey] === "lurking") {
+    wakeUserUp(usernameKey);
+  }
 
+  const userDiv = activeUsers[usernameKey];
   if (userDiv) {
     const bubble = userDiv.querySelector(".speech-bubble");
     if (bubble) {
@@ -126,20 +126,20 @@ function dropUser(username) {
   userDiv.style.top = "-100px";
   userDiv.style.left = `${Math.random() * 90}%`;
 
-  const usernameDiv = document.createElement("div");
-  usernameDiv.className = "join-username";
-  usernameDiv.textContent = username;
-  usernameDiv.style.color = "#00FFFF";
+  const nameDiv = document.createElement("div");
+  nameDiv.className = "join-username";
+  nameDiv.textContent = username;
+  nameDiv.style.color = "#00FFFF";
 
-  const avatarImg = document.createElement("img");
-  avatarImg.className = "join-emoji";
-  avatarImg.src = "assets/idle.gif";
+  const img = document.createElement("img");
+  img.className = "join-emoji";
+  img.src = "assets/idle.gif";
 
-  const speechBubble = document.createElement("div");
-  speechBubble.className = "speech-bubble";
-  speechBubble.style.display = "none";
+  const bubble = document.createElement("div");
+  bubble.className = "speech-bubble";
+  bubble.style.display = "none";
 
-  userDiv.append(usernameDiv, avatarImg, speechBubble);
+  userDiv.append(nameDiv, img, bubble);
   container.appendChild(userDiv);
 
   activeUsers[usernameKey] = userDiv;
@@ -175,9 +175,9 @@ function startWandering(element) {
     const direction = Math.random() < 0.5 ? -1 : 1;
     const distance = 5 + Math.random() * 10;
     const duration = 1000 + Math.random() * 1000;
-    const pauseDuration = 500 + Math.random() * 1500;
+    const pause = 500 + Math.random() * 1500;
 
-    const startTime = Date.now();
+    const start = Date.now();
     const startPos = pos;
     const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
 
@@ -186,9 +186,7 @@ function startWandering(element) {
     function move() {
       if (!element._isWandering) return;
 
-      const elapsed = Date.now() - startTime;
-      const t = Math.min(elapsed / duration, 1);
-
+      const t = Math.min((Date.now() - start) / duration, 1);
       pos = startPos + (endPos - startPos) * t;
       element.style.left = `${pos}%`;
 
@@ -196,7 +194,7 @@ function startWandering(element) {
         requestAnimationFrame(move);
       } else {
         img.src = "assets/idle.gif";
-        setTimeout(step, pauseDuration);
+        setTimeout(step, pause);
       }
     }
 
@@ -208,22 +206,22 @@ function startWandering(element) {
 
 
 // ==========================================================
-// ========== IDLE / LURK / REMOVE ==========================
+// ========== STATE LOGIC ===================================
 // ==========================================================
 
 function resetIdleTimer(usernameKey) {
-  clearTimeout(userTimers[usernameKey]);
+  if (userStates[usernameKey] === "lurking") return;
 
-  if (userStates[usernameKey] !== "active") {
-    wakeUserUp(usernameKey);
-  }
+  clearTimeout(userIdleTimers[usernameKey]);
 
-  userTimers[usernameKey] = setTimeout(() => {
+  userIdleTimers[usernameKey] = setTimeout(() => {
     setUserIdle(usernameKey);
   }, IDLE_TIMEOUT_MS);
 }
 
 function resetRemovalTimer(usernameKey) {
+  if (userStates[usernameKey] === "lurking") return;
+
   clearTimeout(userRemovalTimers[usernameKey]);
 
   userRemovalTimers[usernameKey] = setTimeout(() => {
@@ -232,6 +230,8 @@ function resetRemovalTimer(usernameKey) {
 }
 
 function setUserIdle(usernameKey) {
+  if (userStates[usernameKey] === "lurking") return;
+
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
@@ -247,6 +247,9 @@ function setUserIdle(usernameKey) {
 function setUserLurking(usernameKey) {
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
+
+  clearTimeout(userIdleTimers[usernameKey]);
+  clearTimeout(userRemovalTimers[usernameKey]);
 
   userStates[usernameKey] = "lurking";
   userDiv._isWandering = false;
@@ -271,16 +274,18 @@ function wakeUserUp(usernameKey) {
 }
 
 function removeUser(usernameKey) {
+  if (userStates[usernameKey] === "lurking") return;
+
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
   userDiv.remove();
 
-  clearTimeout(userTimers[usernameKey]);
+  clearTimeout(userIdleTimers[usernameKey]);
   clearTimeout(userRemovalTimers[usernameKey]);
 
   delete activeUsers[usernameKey];
-  delete userTimers[usernameKey];
+  delete userIdleTimers[usernameKey];
   delete userRemovalTimers[usernameKey];
   delete userStates[usernameKey];
 }
@@ -300,8 +305,7 @@ function testDrop() {
 // ========== VERSION LABEL =================================
 // ==========================================================
 
-const VERSION_LABEL = "js v0.05";
-
+const VERSION_LABEL = "js v0.06";
 const testDropBtn = document.getElementById("test-drop-btn");
 if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
   testDropBtn.textContent += ` ${VERSION_LABEL}`;
