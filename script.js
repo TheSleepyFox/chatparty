@@ -33,7 +33,8 @@ const userStates = {}; // "active" | "idle" | "lurking"
 const Z_INDEX = {
   active: 30,
   lurking: 20,
-  idle: 10
+  idle: 10,
+  poof: 100
 };
 
 function updateUserZIndex(usernameKey) {
@@ -49,8 +50,8 @@ function updateUserZIndex(usernameKey) {
 // ========== TIMEOUT CONFIG ================================
 // ==========================================================
 
-const IDLE_TIMEOUT_MS   = 30 * 1000;
-const REMOVE_TIMEOUT_MS = 60 * 1000;
+const IDLE_TIMEOUT_MS   = 10 * 1000;
+const REMOVE_TIMEOUT_MS = 20 * 1000;
 
 
 // ==========================================================
@@ -67,13 +68,11 @@ client.on('message', (channel, tags, message, self) => {
     dropUser(username);
   }
 
-  // ---- !lurk command ------------------------------------
   if (message.trim().toLowerCase() === "!lurk") {
     setUserLurking(usernameKey);
     return;
   }
 
-  // If they talk while lurking → wake them
   if (userStates[usernameKey] === "lurking") {
     wakeUserUp(usernameKey);
   }
@@ -273,11 +272,18 @@ function wakeUserUp(usernameKey) {
   startWandering(userDiv);
 }
 
+
+// ==========================================================
+// ========== REMOVAL + POOF EFFECT =========================
+// ==========================================================
+
 function removeUser(usernameKey) {
   if (userStates[usernameKey] === "lurking") return;
 
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
+
+  spawnPoofAtUser(userDiv);
 
   userDiv.remove();
 
@@ -288,6 +294,28 @@ function removeUser(usernameKey) {
   delete userIdleTimers[usernameKey];
   delete userRemovalTimers[usernameKey];
   delete userStates[usernameKey];
+}
+
+function spawnPoofAtUser(userDiv) {
+  const container = document.getElementById("join-container");
+  if (!container) return;
+
+  const rect = userDiv.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+
+  const poof = document.createElement("img");
+  poof.src = "assets/poof.gif";
+  poof.style.position = "absolute";
+  poof.style.left = `${rect.left - containerRect.left}px`;
+  poof.style.top = `${rect.top - containerRect.top}px`;
+  poof.style.zIndex = Z_INDEX.poof;
+  poof.style.pointerEvents = "none";
+
+  container.appendChild(poof);
+
+  setTimeout(() => {
+    poof.remove();
+  }, 1000);
 }
 
 
@@ -305,7 +333,7 @@ function testDrop() {
 // ========== VERSION LABEL =================================
 // ==========================================================
 
-const VERSION_LABEL = "js v0.06";
+const VERSION_LABEL = "js v0.07";
 const testDropBtn = document.getElementById("test-drop-btn");
 if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
   testDropBtn.textContent += ` ${VERSION_LABEL}`;
