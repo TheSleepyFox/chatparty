@@ -27,7 +27,7 @@
   z-index: 11;
 }
 
-.join-emoji {
+.join-emoji, .poof {
   width: 64px;
   height: 64px;
   object-fit: contain;
