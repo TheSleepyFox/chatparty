@@ -13,7 +13,7 @@ const client = new tmi.Client({
     secure: true,
     reconnect: true
   },
-  channels: ['thesleepyfox'] // change if needed
+  channels: ['thesleepyfox']
 });
 
 client.connect();
@@ -26,6 +26,25 @@ client.connect();
 const activeUsers = {}; // usernameKey -> userDiv
 const userTimers  = {}; // usernameKey -> timeout ID
 const userStates  = {}; // usernameKey -> "active" | "idle" | "lurking"
+
+
+// ==========================================================
+// ========== Z-INDEX MANAGEMENT =============================
+// ==========================================================
+
+const Z_INDEX = {
+  active: 30,   // wandering users on top
+  lurking: 20,  // lurkers behind actives
+  idle: 10      // idle users at the back
+};
+
+function updateUserZIndex(usernameKey) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  const state = userStates[usernameKey] || "active";
+  userDiv.style.zIndex = Z_INDEX[state] ?? 10;
+}
 
 
 // ==========================================================
@@ -46,7 +65,7 @@ client.on('message', (channel, tags, message, self) => {
   // ---- !lurk command ------------------------------------
   if (message.trim().toLowerCase() === "!lurk") {
     setUserLurking(usernameKey);
-    return; // lurk message does nothing else
+    return;
   }
 
   const userDiv = activeUsers[usernameKey];
@@ -117,6 +136,7 @@ function dropUser(username) {
   activeUsers[usernameKey] = userDiv;
   userStates[usernameKey] = "active";
 
+  updateUserZIndex(usernameKey);
   resetIdleTimer(usernameKey);
 
   // Drop-in animation
@@ -206,6 +226,8 @@ function setUserIdle(usernameKey) {
 
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/away.gif";
+
+  updateUserZIndex(usernameKey);
 }
 
 function setUserLurking(usernameKey) {
@@ -219,6 +241,8 @@ function setUserLurking(usernameKey) {
 
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/lurk.gif";
+
+  updateUserZIndex(usernameKey);
 }
 
 function wakeUserUp(usernameKey) {
@@ -230,6 +254,7 @@ function wakeUserUp(usernameKey) {
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/idle.gif";
 
+  updateUserZIndex(usernameKey);
   startWandering(userDiv);
 }
 
@@ -248,7 +273,7 @@ function testDrop() {
 // ========== VERSION LABEL =================================
 // ==========================================================
 
-const VERSION_LABEL = "js v0.01";
+const VERSION_LABEL = "js v0.04";
 
 const testDropBtn = document.getElementById("test-drop-btn");
 if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
