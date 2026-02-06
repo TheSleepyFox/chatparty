@@ -113,11 +113,9 @@ client.on('join', (channel, username, self) => {
 // ==========================================================
 // ========== USER SPAWN ====================================
 // ==========================================================
-
-function dropUser(username) {
+function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
   const container = document.getElementById("join-container");
-  if (!container) return;
 
   const userDiv = document.createElement("div");
   userDiv.className = "user-container";
@@ -125,29 +123,31 @@ function dropUser(username) {
   userDiv.style.top = "-100px";
   userDiv.style.left = `${Math.random() * 90}%`;
 
-  const nameDiv = document.createElement("div");
-  nameDiv.className = "join-username";
-  nameDiv.textContent = username;
-  nameDiv.style.color = "#00FFFF";
+  const usernameDiv = document.createElement("div");
+  usernameDiv.className = "join-username";
+  usernameDiv.textContent = username;
 
-  const img = document.createElement("img");
-  img.className = "join-emoji";
-  img.src = "assets/idle.gif";
+  const emojiDiv = document.createElement("img");
+  emojiDiv.className = "join-emoji";
+  emojiDiv.src = "assets/idle.gif";
 
-  const bubble = document.createElement("div");
-  bubble.className = "speech-bubble";
-  bubble.style.display = "none";
+  const speechBubble = document.createElement("div");
+  speechBubble.className = "speech-bubble";
+  speechBubble.style.display = "none";
 
-  userDiv.append(nameDiv, img, bubble);
+  userDiv.appendChild(usernameDiv);
+  userDiv.appendChild(emojiDiv);
+  userDiv.appendChild(speechBubble);
   container.appendChild(userDiv);
 
   activeUsers[usernameKey] = userDiv;
   userStates[usernameKey] = "active";
 
-  updateUserZIndex(usernameKey);
+  // START BOTH TIMERS ON SPAWN
   resetIdleTimer(usernameKey);
   resetRemovalTimer(usernameKey);
 
+  // Fall animation
   userDiv.style.animation = "fall 1.6s ease-out forwards";
 
   setTimeout(() => {
@@ -155,7 +155,6 @@ function dropUser(username) {
     startWandering(userDiv);
   }, 1600);
 }
-
 
 // ==========================================================
 // ========== WANDERING LOGIC ================================
