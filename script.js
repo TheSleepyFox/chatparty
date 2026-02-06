@@ -1,6 +1,6 @@
 /************************************************************
  * TWITCH CHAT OVERLAY – WANDERING CHAT AVATARS
- * js v0.03
+ * js v0.01
  ************************************************************/
 
 
@@ -25,7 +25,7 @@ client.connect();
 
 const activeUsers = {}; // usernameKey -> userDiv
 const userTimers  = {}; // usernameKey -> timeout ID
-const userStates  = {}; // usernameKey -> "active" | "idle"
+const userStates  = {}; // usernameKey -> "active" | "idle" | "lurking"
 
 
 // ==========================================================
@@ -41,6 +41,12 @@ client.on('message', (channel, tags, message, self) => {
   // Spawn user if missing
   if (!activeUsers[usernameKey]) {
     dropUser(username);
+  }
+
+  // ---- !lurk command ------------------------------------
+  if (message.trim().toLowerCase() === "!lurk") {
+    setUserLurking(usernameKey);
+    return; // lurk message does nothing else
   }
 
   const userDiv = activeUsers[usernameKey];
@@ -128,7 +134,6 @@ function dropUser(username) {
 // ==========================================================
 
 function startWandering(element) {
-  // Prevent multiple loops
   if (element._isWandering) return;
 
   element._isWandering = true;
@@ -175,7 +180,7 @@ function startWandering(element) {
 
 
 // ==========================================================
-// ========== IDLE / AWAY LOGIC ==============================
+// ========== IDLE / AWAY / LURK LOGIC =======================
 // ==========================================================
 
 const IDLE_TIMEOUT_MS = 30 * 1000;
@@ -183,7 +188,7 @@ const IDLE_TIMEOUT_MS = 30 * 1000;
 function resetIdleTimer(usernameKey) {
   clearTimeout(userTimers[usernameKey]);
 
-  if (userStates[usernameKey] === "idle") {
+  if (userStates[usernameKey] === "idle" || userStates[usernameKey] === "lurking") {
     wakeUserUp(usernameKey);
   }
 
@@ -201,6 +206,19 @@ function setUserIdle(usernameKey) {
 
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/away.gif";
+}
+
+function setUserLurking(usernameKey) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  userStates[usernameKey] = "lurking";
+  userDiv._isWandering = false;
+
+  clearTimeout(userTimers[usernameKey]);
+
+  const img = userDiv.querySelector(".join-emoji");
+  if (img) img.src = "assets/lurk.gif";
 }
 
 function wakeUserUp(usernameKey) {
@@ -230,7 +248,7 @@ function testDrop() {
 // ========== VERSION LABEL =================================
 // ==========================================================
 
-const VERSION_LABEL = "js v0.03";
+const VERSION_LABEL = "js v0.01";
 
 const testDropBtn = document.getElementById("test-drop-btn");
 if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
