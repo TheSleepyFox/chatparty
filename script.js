@@ -50,8 +50,8 @@ function updateUserZIndex(usernameKey) {
 // ========== TIMEOUT CONFIG ================================
 // ==========================================================
 
-const IDLE_TIMEOUT_MS   = 10 * 1000;
-const REMOVE_TIMEOUT_MS = 20 * 1000;
+const IDLE_TIMEOUT_MS   = 1200 * 1000;
+const REMOVE_TIMEOUT_MS = 1200 * 1000;
 
 
 // ==========================================================
