@@ -304,6 +304,7 @@ function spawnPoofAtUser(userDiv) {
   const containerRect = container.getBoundingClientRect();
 
   const poof = document.createElement("img");
+  poof.className = "join-emoji";
   poof.src = "assets/poof.gif";
   poof.style.position = "absolute";
   poof.style.left = `${rect.left - containerRect.left}px`;
