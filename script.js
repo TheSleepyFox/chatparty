@@ -23,9 +23,10 @@ client.connect();
 // ========== GLOBAL STATE =================================
 // ==========================================================
 
-const activeUsers = {}; // usernameKey -> userDiv
-const userTimers  = {}; // usernameKey -> timeout ID
-const userStates  = {}; // usernameKey -> "active" | "idle" | "lurking"
+const activeUsers = {};         // usernameKey -> userDiv
+const userTimers = {};          // idle timers
+const userRemovalTimers = {};   // removal timers
+const userStates = {};          // "active" | "idle" | "lurking"
 
 
 // ==========================================================
@@ -33,9 +34,9 @@ const userStates  = {}; // usernameKey -> "active" | "idle" | "lurking"
 // ==========================================================
 
 const Z_INDEX = {
-  active: 30,   // wandering users on top
-  lurking: 20,  // lurkers behind actives
-  idle: 10      // idle users at the back
+  active: 30,
+  lurking: 20,
+  idle: 10
 };
 
 function updateUserZIndex(usernameKey) {
@@ -48,6 +49,14 @@ function updateUserZIndex(usernameKey) {
 
 
 // ==========================================================
+// ========== TIMEOUT CONFIG ================================
+// ==========================================================
+
+const IDLE_TIMEOUT_MS   = 30 * 1000; // 30 seconds
+const REMOVE_TIMEOUT_MS = 60 * 1000; // 60 seconds
+
+
+// ==========================================================
 // ========== CHAT MESSAGE HANDLER ===========================
 // ==========================================================
 
@@ -57,7 +66,6 @@ client.on('message', (channel, tags, message, self) => {
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
 
-  // Spawn user if missing
   if (!activeUsers[usernameKey]) {
     dropUser(username);
   }
@@ -65,12 +73,12 @@ client.on('message', (channel, tags, message, self) => {
   // ---- !lurk command ------------------------------------
   if (message.trim().toLowerCase() === "!lurk") {
     setUserLurking(usernameKey);
+    resetRemovalTimer(usernameKey);
     return;
   }
 
   const userDiv = activeUsers[usernameKey];
 
-  // Speech bubble
   if (userDiv) {
     const bubble = userDiv.querySelector(".speech-bubble");
     if (bubble) {
@@ -85,6 +93,7 @@ client.on('message', (channel, tags, message, self) => {
   }
 
   resetIdleTimer(usernameKey);
+  resetRemovalTimer(usernameKey);
 });
 
 
@@ -138,8 +147,8 @@ function dropUser(username) {
 
   updateUserZIndex(usernameKey);
   resetIdleTimer(usernameKey);
+  resetRemovalTimer(usernameKey);
 
-  // Drop-in animation
   userDiv.style.animation = "fall 1.6s ease-out forwards";
 
   setTimeout(() => {
@@ -155,7 +164,6 @@ function dropUser(username) {
 
 function startWandering(element) {
   if (element._isWandering) return;
-
   element._isWandering = true;
 
   let pos = parseFloat(element.style.left || "50");
@@ -200,21 +208,27 @@ function startWandering(element) {
 
 
 // ==========================================================
-// ========== IDLE / AWAY / LURK LOGIC =======================
+// ========== IDLE / LURK / REMOVE ==========================
 // ==========================================================
-
-const IDLE_TIMEOUT_MS = 30 * 1000;
 
 function resetIdleTimer(usernameKey) {
   clearTimeout(userTimers[usernameKey]);
 
-  if (userStates[usernameKey] === "idle" || userStates[usernameKey] === "lurking") {
+  if (userStates[usernameKey] !== "active") {
     wakeUserUp(usernameKey);
   }
 
   userTimers[usernameKey] = setTimeout(() => {
     setUserIdle(usernameKey);
   }, IDLE_TIMEOUT_MS);
+}
+
+function resetRemovalTimer(usernameKey) {
+  clearTimeout(userRemovalTimers[usernameKey]);
+
+  userRemovalTimers[usernameKey] = setTimeout(() => {
+    removeUser(usernameKey);
+  }, REMOVE_TIMEOUT_MS);
 }
 
 function setUserIdle(usernameKey) {
@@ -237,8 +251,6 @@ function setUserLurking(usernameKey) {
   userStates[usernameKey] = "lurking";
   userDiv._isWandering = false;
 
-  clearTimeout(userTimers[usernameKey]);
-
   const img = userDiv.querySelector(".join-emoji");
   if (img) img.src = "assets/lurk.gif";
 
@@ -258,6 +270,21 @@ function wakeUserUp(usernameKey) {
   startWandering(userDiv);
 }
 
+function removeUser(usernameKey) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  userDiv.remove();
+
+  clearTimeout(userTimers[usernameKey]);
+  clearTimeout(userRemovalTimers[usernameKey]);
+
+  delete activeUsers[usernameKey];
+  delete userTimers[usernameKey];
+  delete userRemovalTimers[usernameKey];
+  delete userStates[usernameKey];
+}
+
 
 // ==========================================================
 // ========== DEV TEST BUTTON ================================
@@ -273,7 +300,7 @@ function testDrop() {
 // ========== VERSION LABEL =================================
 // ==========================================================
 
-const VERSION_LABEL = "js v0.04";
+const VERSION_LABEL = "js v0.05";
 
 const testDropBtn = document.getElementById("test-drop-btn");
 if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
