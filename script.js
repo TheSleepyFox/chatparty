@@ -270,6 +270,10 @@ function wakeUserUp(usernameKey) {
 
   updateUserZIndex(usernameKey);
   startWandering(userDiv);
+
+  // RESTART TIMERS
+  resetIdleTimer(usernameKey);
+  resetRemovalTimer(usernameKey);
 }
 
 
