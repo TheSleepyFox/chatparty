@@ -83,7 +83,11 @@ client.on('message', (channel, tags, message, self) => {
     return;
   }
 
-  if (userStates[usernameKey] === "lurking") {
+  //if (userStates[usernameKey] === "lurking") {
+  //  wakeUserUp(usernameKey);
+  //}
+
+  if (userStates[usernameKey] !== "lurking") {
     wakeUserUp(usernameKey);
   }
 
