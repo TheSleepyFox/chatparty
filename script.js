@@ -84,8 +84,8 @@ client.on('message', (channel, tags, message, self) => {
   }
 
   //if (userStates[usernameKey] === "lurking") {
-    wakeUserUp(usernameKey);
-  }
+  //  wakeUserUp(usernameKey);
+  //}
 
   if (userStates[usernameKey] !== "active") {
     wakeUserUp(usernameKey);
