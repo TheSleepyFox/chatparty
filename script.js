@@ -73,6 +73,16 @@ client.on('message', (channel, tags, message, self) => {
     return;
   }
 
+  if (message.trim().toLowerCase() === "!leave") {
+    removeUser(usernameKey);
+    return;
+  }
+
+  if (message.trim().toLowerCase() === "!sleep") {
+    setUserIdle(usernameKey)
+    return;
+  }
+
   if (userStates[usernameKey] === "lurking") {
     wakeUserUp(usernameKey);
   }
