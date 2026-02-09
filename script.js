@@ -78,14 +78,10 @@ client.on('message', (channel, tags, message, self) => {
     return;
   }
 
-  if (message.textContent.includes("!sleep")) {
+  if (message.trim().toLowerCase() === "!sleep") {
     setUserIdle(usernameKey)
     return;
   }
-
-  //if (userStates[usernameKey] === "lurking") {
-  //  wakeUserUp(usernameKey);
-  //}
 
   if (userStates[usernameKey] !== "active") {
     wakeUserUp(usernameKey);
