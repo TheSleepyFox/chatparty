@@ -78,7 +78,7 @@ client.on('message', (channel, tags, message, self) => {
     return;
   }
 
-  if (message.trim().toLowerCase() === "!sleep") {
+  if (message.trim().toLowerCase().includes() === "!sleep") {
     setUserIdle(usernameKey)
     return;
   }
