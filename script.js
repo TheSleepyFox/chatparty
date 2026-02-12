@@ -493,6 +493,20 @@ function testDrop() {
 // ==========================================================
 loadSkinRegistry();
 
+//----------------------------------
+// Asset Resolver
+//----------------------------------
+function getUserAsset(usernameKey, animationName) {
+  const skin = userSkins[usernameKey];
+
+  if (!skin) {
+    console.warn(`No skin assigned for ${usernameKey}`);
+    return null;
+  }
+
+  return `assets/${skin}/${animationName}.gif`;
+}
+
 // ==========================================================
 // ========== VERSION LABEL =================================
 // ==========================================================
