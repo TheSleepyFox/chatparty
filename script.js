@@ -14,7 +14,12 @@ const client = new tmi.Client({
 });
 
 client.connect();
-
+// ==========================================================
+// ========== SKIN REGISTERY DATA =================================
+// ==========================================================
+let registeredPublicSkins = [];
+let registeredUserOnlySkins = [];
+let registryLoaded = false;
 
 // ==========================================================
 // ========== GLOBAL STATE =================================
@@ -24,6 +29,53 @@ const activeUsers = {};
 const userIdleTimers = {};
 const userRemovalTimers = {};
 const userStates = {}; // "active" | "idle" | "lurking"
+
+// ==========================================================
+// ========== REGISTRY LOADER =============================
+// ==========================================================
+async function loadSkinRegistry() {
+  try {
+    const response = await fetch("assets/skins.txt");
+
+    if (!response.ok) {
+      console.warn("Could not load skins.txt");
+      return;
+    }
+
+    const text = await response.text();
+
+    const lines = text.split("\n");
+
+    registeredPublicSkins = [];
+    registeredUserOnlySkins = [];
+
+    lines.forEach(line => {
+      const trimmed = line.trim().toLowerCase();
+
+      // Ignore blank lines and comments
+      if (!trimmed || trimmed.startsWith("#")) return;
+
+      // User-only skins start with @
+      if (trimmed.startsWith("@")) {
+        const username = trimmed.substring(1);
+        if (username) {
+          registeredUserOnlySkins.push(username);
+        }
+      } else {
+        registeredPublicSkins.push(trimmed);
+      }
+    });
+
+    registryLoaded = true;
+
+    console.log("Skin registry loaded.");
+    console.log("Public skins:", registeredPublicSkins);
+    console.log("User-only skins:", registeredUserOnlySkins);
+
+  } catch (error) {
+    console.error("Error loading skin registry:", error);
+  }
+}
 
 
 // ==========================================================
@@ -342,6 +394,10 @@ function testDrop() {
   dropUser(testUser);
 }
 
+// ==========================================================
+// ========== FINAL CALLS ================================
+// ==========================================================
+loadSkinRegistry();
 
 // ==========================================================
 // ========== VERSION LABEL =================================
