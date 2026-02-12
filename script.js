@@ -444,7 +444,7 @@ function removeUser(usernameKey) {
   const userDiv = activeUsers[usernameKey];
   if (!userDiv) return;
 
-  spawnPoofAtUser(userDiv);
+  spawnPoofAtUser(userDiv, usernameKey);
 
   userDiv.remove();
 
@@ -457,7 +457,7 @@ function removeUser(usernameKey) {
   delete userStates[usernameKey];
 }
 
-function spawnPoofAtUser(userDiv) {
+function spawnPoofAtUser(userDiv, usernameKey) {
   const container = document.getElementById("join-container");
   if (!container) return;
 
