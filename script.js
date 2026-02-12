@@ -285,7 +285,7 @@ function dropUser(username, emoji) {
 
   const emojiDiv = document.createElement("img");
   emojiDiv.className = "join-emoji";
-  emojiDiv.src = "assets/idle.gif";
+  emojiDiv.src = getUserAsset(usernameKey, "idle");
 
   const speechBubble = document.createElement("div");
   speechBubble.className = "speech-bubble";
@@ -347,7 +347,7 @@ function startWandering(element) {
       if (t < 1) {
         requestAnimationFrame(move);
       } else {
-        img.src = "assets/idle.gif";
+        img.src = getUserAsset(usernameKey, "idle");
         setTimeout(step, pause);
       }
     }
@@ -421,7 +421,7 @@ function wakeUserUp(usernameKey) {
   userStates[usernameKey] = "active";
 
   const img = userDiv.querySelector(".join-emoji");
-  if (img) img.src = "assets/idle.gif";
+  if (img) img.src = getUserAsset(usernameKey, "idle");
 
   updateUserZIndex(usernameKey);
   startWandering(userDiv);
