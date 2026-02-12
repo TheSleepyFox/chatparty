@@ -99,6 +99,7 @@ const activeUsers = {};
 const userIdleTimers = {};
 const userRemovalTimers = {};
 const userStates = {}; // "active" | "idle" | "lurking"
+let userSkins = {};
 
 // ---------------------------
 //  REGISTRY LOADER 
@@ -148,6 +149,24 @@ await validateAllSkins();
   } catch (error) {
     console.error("Error loading skin registry:", error);
   }
+}
+// ---------------------------
+// Skin Assignment Helper
+// ---------------------------
+function assignInitialSkin(usernameKey) {
+  // User-only skin match
+  if (validUserOnlySkins.includes(usernameKey)) {
+    console.log(`User "${usernameKey}" assigned user-only skin.`);
+    return usernameKey;
+  }
+
+  // Default fallback
+  if (validPublicSkins.includes("default")) {
+    return "default";
+  }
+
+  console.warn("No valid default skin found. User will have no skin.");
+  return null;
 }
 
 
@@ -246,6 +265,12 @@ client.on('join', (channel, username, self) => {
 // ==========================================================
 function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
+  
+  // Assign skin
+  const assignedSkin = assignInitialSkin(usernameKey);
+  userSkins[usernameKey] = assignedSkin;
+  console.log(`Skin for ${usernameKey}:`, assignedSkin);
+  
   const container = document.getElementById("join-container");
 
   const userDiv = document.createElement("div");
