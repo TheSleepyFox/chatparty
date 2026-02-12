@@ -1,6 +1,8 @@
 # Public skins
 default
 red
+publictest
 
 # User-locked skins
 @sleepyfox
+@usertest
