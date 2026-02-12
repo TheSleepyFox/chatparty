@@ -4,5 +4,5 @@ red
 publictest
 
 # User-locked skins
-@sleepyfox
+@thesleepyfox
 @usertest
