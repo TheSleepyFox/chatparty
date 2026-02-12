@@ -395,7 +395,7 @@ function setUserIdle(usernameKey) {
   userDiv._isWandering = false;
 
   const img = userDiv.querySelector(".join-emoji");
-  if (img) img.src = "assets/away.gif";
+  if (img) img.src = getUserAsset(usernameKey, "away");
 
   updateUserZIndex(usernameKey);
 }
@@ -411,7 +411,7 @@ function setUserLurking(usernameKey) {
   userDiv._isWandering = false;
 
   const img = userDiv.querySelector(".join-emoji");
-  if (img) img.src = "assets/lurk.gif";
+  if (img) img.src = getUserAsset(usernameKey, "lurk");
 
   updateUserZIndex(usernameKey);
 }
@@ -466,7 +466,7 @@ function spawnPoofAtUser(userDiv) {
 
   const poof = document.createElement("img");
   poof.className = "join-emoji";
-  poof.src = `assets/poof.gif?${Date.now()}`;
+  poof.src = `${getUserAsset(usernameKey, "poof")}?${Date.now()}`;
   poof.style.position = "absolute";
   poof.style.left = `${rect.left - containerRect.left}px`;
   poof.style.top = `${rect.top - containerRect.top}px`;
