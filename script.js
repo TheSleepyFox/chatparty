@@ -335,7 +335,9 @@ function startWandering(element, usernameKey) {
     const startPos = pos;
     const endPos = Math.max(0, Math.min(95, startPos + direction * distance));
 
-    img.src = direction === -1 ? "assets/left.gif" : "assets/right.gif";
+    img.src = direction === -1
+      ? getUserAsset(usernameKey, "left")
+      : getUserAsset(usernameKey, "right");
 
     function move() {
       if (!element._isWandering) return;
