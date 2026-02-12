@@ -14,25 +14,95 @@ const client = new tmi.Client({
 });
 
 client.connect();
-// ==========================================================
-// ========== SKIN REGISTERY DATA =================================
-// ==========================================================
+// ---------------------------
+//  SKIN REGISTERY DATA 
+// ---------------------------
 let registeredPublicSkins = [];
 let registeredUserOnlySkins = [];
 let registryLoaded = false;
 
-// ==========================================================
-// ========== GLOBAL STATE =================================
-// ==========================================================
+// ---------------------------
+// Validated Skins
+// ---------------------------
 
+let validPublicSkins = [];
+let validUserOnlySkins = [];
+
+const REQUIRED_SKIN_FILES = [
+  "idle.gif",
+  "away.gif",
+  "left.gif",
+  "right.gif",
+  "lurk.gif",
+  "poof.gif"
+];
+
+// File Existence Checker
+async function fileExists(path) {
+  try {
+    const response = await fetch(path, { method: "HEAD" });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+// Skin Validator
+async function validateSkin(skinName) {
+  for (const file of REQUIRED_SKIN_FILES) {
+    const path = `assets/${skinName}/${file}`;
+    const exists = await fileExists(path);
+
+    if (!exists) {
+      console.warn(`Skin "${skinName}" missing file: ${file}`);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Validate All Registered Skins
+async function validateAllSkins() {
+  validPublicSkins = [];
+  validUserOnlySkins = [];
+
+  // Validate public skins
+  for (const skin of registeredPublicSkins) {
+    const isValid = await validateSkin(skin);
+    if (isValid) {
+      validPublicSkins.push(skin);
+    } else {
+      console.warn(`Public skin "${skin}" rejected.`);
+    }
+  }
+
+  // Validate user-only skins
+  for (const skin of registeredUserOnlySkins) {
+    const isValid = await validateSkin(skin);
+    if (isValid) {
+      validUserOnlySkins.push(skin);
+    } else {
+      console.warn(`User-only skin "${skin}" rejected.`);
+    }
+  }
+
+  console.log("Valid public skins:", validPublicSkins);
+  console.log("Valid user-only skins:", validUserOnlySkins);
+}
+
+
+// ---------------------------
+// GLOBAL STATE 
+// ---------------------------
 const activeUsers = {};
 const userIdleTimers = {};
 const userRemovalTimers = {};
 const userStates = {}; // "active" | "idle" | "lurking"
 
-// ==========================================================
-// ========== REGISTRY LOADER =============================
-// ==========================================================
+// ---------------------------
+//  REGISTRY LOADER 
+// ---------------------------
 async function loadSkinRegistry() {
   try {
     const response = await fetch("assets/skins.txt");
@@ -69,8 +139,11 @@ async function loadSkinRegistry() {
     registryLoaded = true;
 
     console.log("Skin registry loaded.");
-    console.log("Public skins:", registeredPublicSkins);
-    console.log("User-only skins:", registeredUserOnlySkins);
+    console.log("Registered public skins:", registeredPublicSkins);
+    console.log("Registered user-only skins:", registeredUserOnlySkins);
+
+// Now validate them
+await validateAllSkins();
 
   } catch (error) {
     console.error("Error loading skin registry:", error);
@@ -78,10 +151,9 @@ async function loadSkinRegistry() {
 }
 
 
-// ==========================================================
-// ========== Z-INDEX MANAGEMENT =============================
-// ==========================================================
-
+// ---------------------------
+//  Z-INDEX MANAGEMENT 
+// ---------------------------
 const Z_INDEX = {
   active: 30,
   lurking: 20,
@@ -98,18 +170,15 @@ function updateUserZIndex(usernameKey) {
 }
 
 
-// ==========================================================
-// ========== TIMEOUT CONFIG ================================
-// ==========================================================
-
+// ---------------------------
+//  TIMEOUT CONFIG 
+// ---------------------------
 const IDLE_TIMEOUT_MS   = 600000;
 const REMOVE_TIMEOUT_MS = 1200000;
 
-
-// ==========================================================
-// ========== CHAT MESSAGE HANDLER ===========================
-// ==========================================================
-
+// ---------------------------
+//  CHAT MESSAGE HANDLER 
+// ---------------------------
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
 
