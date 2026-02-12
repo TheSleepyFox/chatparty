@@ -1,0 +1,8 @@
+# Public skins
+default
+red
+blue
+
+# User-locked skins
+@sleepyfox
+@specialviewer
