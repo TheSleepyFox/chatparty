@@ -308,7 +308,7 @@ function dropUser(username, emoji) {
 
   setTimeout(() => {
     userDiv.style.animation = "";
-    startWandering(userDiv);
+    startWandering(userDiv, usernameKey);
   }, 1600);
 }
 
@@ -316,7 +316,7 @@ function dropUser(username, emoji) {
 // ========== WANDERING LOGIC ================================
 // ==========================================================
 
-function startWandering(element) {
+function startWandering(element, usernameKey) {
   if (element._isWandering) return;
   element._isWandering = true;
 
@@ -424,7 +424,7 @@ function wakeUserUp(usernameKey) {
   if (img) img.src = getUserAsset(usernameKey, "idle");
 
   updateUserZIndex(usernameKey);
-  startWandering(userDiv);
+  startWandering(userDiv, usernameKey);
 
   // RESTART TIMERS
   resetIdleTimer(usernameKey);
