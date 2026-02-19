@@ -4,9 +4,9 @@
  ************************************************************/
 
 
-// ==========================================================
-// ========== TWITCH CHAT CLIENT SETUP ======================
-// ==========================================================
+// ---------------------------
+//  TWITCH CHAT CLIENT SETUP 
+// ---------------------------
 
 const client = new tmi.Client({
   connection: { secure: true, reconnect: true },
@@ -226,6 +226,12 @@ client.on('message', (channel, tags, message, self) => {
   if (userStates[usernameKey] !== "active") {
     wakeUserUp(usernameKey);
   }
+
+  if (message.startsWith("!")) {
+    const requestedSkin = message.slice(1).toLowerCase();
+    attemptSkinChange(username, requestedSkin);
+  }
+  
 
   const userDiv = activeUsers[usernameKey];
   if (userDiv) {
