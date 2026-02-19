@@ -227,12 +227,6 @@ client.on('message', (channel, tags, message, self) => {
     wakeUserUp(usernameKey);
   }
 
-  if (message.startsWith("!")) {
-    const requestedSkin = message.slice(1).toLowerCase();
-    attemptSkinChange(username, requestedSkin);
-  }
-  
-
   const userDiv = activeUsers[usernameKey];
   if (userDiv) {
     const bubble = userDiv.querySelector(".speech-bubble");
@@ -252,9 +246,9 @@ client.on('message', (channel, tags, message, self) => {
 });
 
 
-// ==========================================================
-// ========== USER JOIN HANDLER ==============================
-// ==========================================================
+// ---------------------------
+//  USER JOIN HANDLER 
+// ---------------------------
 
 client.on('join', (channel, username, self) => {
   if (self) return;
@@ -266,9 +260,9 @@ client.on('join', (channel, username, self) => {
 });
 
 
-// ==========================================================
-// ========== USER SPAWN ====================================
-// ==========================================================
+// ---------------------------
+//  USER SPAWN 
+// ---------------------------
 function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
   
@@ -318,9 +312,9 @@ function dropUser(username, emoji) {
   }, 1600);
 }
 
-// ==========================================================
-// ========== WANDERING LOGIC ================================
-// ==========================================================
+// ---------------------------
+//  WANDERING LOGIC 
+// ---------------------------
 
 function startWandering(element, usernameKey) {
   if (element._isWandering) return;
@@ -367,9 +361,9 @@ function startWandering(element, usernameKey) {
 }
 
 
-// ==========================================================
-// ========== STATE LOGIC ===================================
-// ==========================================================
+// ---------------------------
+//  STATE LOGIC 
+// ---------------------------
 
 function resetIdleTimer(usernameKey) {
   if (userStates[usernameKey] === "lurking") return;
@@ -440,9 +434,9 @@ function wakeUserUp(usernameKey) {
 }
 
 
-// ==========================================================
-// ========== REMOVAL + POOF EFFECT =========================
-// ==========================================================
+// ---------------------------
+//  REMOVAL + POOF EFFECT 
+// ---------------------------
 
 function removeUser(usernameKey) {
   if (userStates[usernameKey] === "lurking") return;
@@ -487,18 +481,18 @@ function spawnPoofAtUser(userDiv, usernameKey) {
 }
 
 
-// ==========================================================
-// ========== DEV TEST BUTTON ================================
-// ==========================================================
+// ---------------------------
+//  DEV TEST BUTTON 
+// ---------------------------
 
 function testDrop() {
   const testUser = "TestUser" + Math.floor(Math.random() * 1000);
   dropUser(testUser);
 }
 
-// ==========================================================
-// ========== FINAL CALLS ================================
-// ==========================================================
+// ---------------------------
+//  FINAL CALLS 
+// ---------------------------
 loadSkinRegistry();
 
 //----------------------------------
@@ -515,12 +509,3 @@ function getUserAsset(usernameKey, animationName) {
   return `assets/${skin}/${animationName}.gif`;
 }
 
-// ==========================================================
-// ========== VERSION LABEL =================================
-// ==========================================================
-
-const VERSION_LABEL = "js v0.07";
-const testDropBtn = document.getElementById("test-drop-btn");
-if (testDropBtn && !testDropBtn.textContent.includes(VERSION_LABEL)) {
-  testDropBtn.textContent += ` ${VERSION_LABEL}`;
-}
