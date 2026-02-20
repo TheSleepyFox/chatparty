@@ -226,7 +226,18 @@ client.on('message', (channel, tags, message, self) => {
   if (userStates[usernameKey] !== "active") {
     wakeUserUp(usernameKey);
   }
+  
+   // Skin command (e.g. !red)
+  if (message.startsWith("!")) {
+    const requestedSkin = message.slice(1).toLowerCase();
 
+    // Ignore built-in commands
+    if (["lurk", "leave", "sleep"].includes(requestedSkin)) return;
+
+    handleSkinCommand(usernameKey, requestedSkin);
+    return;
+  }
+  
   const userDiv = activeUsers[usernameKey];
   if (userDiv) {
     const bubble = userDiv.querySelector(".speech-bubble");
@@ -480,6 +491,51 @@ function spawnPoofAtUser(userDiv, usernameKey) {
   }, 1000);
 }
 
+// ---------------------------
+//  Handling public Skins
+// ---------------------------
+function handleSkinCommand(usernameKey, skinName) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  // Only allow validated public skins
+  if (!validPublicSkins.includes(skinName)) {
+    console.log(`Skin "${skinName}" is not a valid public skin.`);
+    return;
+  }
+
+  // Assign new skin
+  userSkins[usernameKey] = skinName;
+
+  console.log(`${usernameKey} switched to skin: ${skinName}`);
+
+  refreshUserAppearance(usernameKey);
+}
+
+function refreshUserAppearance(usernameKey) {
+  const userDiv = activeUsers[usernameKey];
+  if (!userDiv) return;
+
+  const img = userDiv.querySelector(".join-emoji");
+  if (!img) return;
+
+  const state = userStates[usernameKey];
+
+  switch (state) {
+    case "idle":
+      img.src = getUserAsset(usernameKey, "away");
+      break;
+
+    case "lurking":
+      img.src = getUserAsset(usernameKey, "lurk");
+      break;
+
+    case "active":
+    default:
+      img.src = getUserAsset(usernameKey, "idle");
+      break;
+  }
+}
 
 // ---------------------------
 //  DEV TEST BUTTON 
