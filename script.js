@@ -174,9 +174,9 @@ function assignInitialSkin(usernameKey) {
 //  Z-INDEX MANAGEMENT 
 // ---------------------------
 const Z_INDEX = {
-  active: 30,
+  active: 10,
   lurking: 20,
-  idle: 10,
+  idle: 30,
   poof: 100
 };
 
@@ -319,7 +319,11 @@ function dropUser(username, emoji) {
 
   setTimeout(() => {
     userDiv.style.animation = "";
-    startWandering(userDiv, usernameKey);
+  
+    // Only start wandering if the user is still active
+    if (userStates[usernameKey] === "active") {
+      startWandering(userDiv, usernameKey);
+    }
   }, 1600);
 }
 
