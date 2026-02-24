@@ -196,66 +196,64 @@ const IDLE_TIMEOUT_MS   = 600000;
 const REMOVE_TIMEOUT_MS = 1200000;
 
 // ---------------------------
-//  CHAT MESSAGE HANDLER 
+// COMMAND REGISTRY
 // ---------------------------
-client.on('message', (channel, tags, message, self) => {
-  if (self) return;
 
-  const username = tags['display-name'] || tags.username;
-  const usernameKey = username.toLowerCase();
-
-  if (!activeUsers[usernameKey]) {
-    dropUser(username);
+const commandRegistry = [
+  {
+    triggers: ["lurk", "brb", "afk"],
+    action: (usernameKey) => setUserLurking(usernameKey)
+  },
+  {
+    triggers: ["leave", "bye"],
+    action: (usernameKey) => removeUser(usernameKey)
+  },
+  {
+    triggers: ["sleep"],
+    action: (usernameKey) => setUserIdle(usernameKey)
   }
+];
 
-  if (message.trim().toLowerCase() === "!lurk") {
-    setUserLurking(usernameKey);
-    return;
-  }
+// ---------------------------
+// COMMAND PROCESSOR
+// ---------------------------
+function processChatCommands(message, usernameKey) {
+  const msg = message.toLowerCase();
 
-  if (message.trim().toLowerCase() === "!leave") {
-    removeUser(usernameKey);
-    return;
-  }
+  for (const command of commandRegistry) {
+    for (const trigger of command.triggers) {
 
-  if (message.trim().toLowerCase() === "!sleep") {
-    setUserIdle(usernameKey)
-    return;
-  }
+      const regex = new RegExp(`\\!${trigger}\\b`);
 
-  if (userStates[usernameKey] !== "active") {
-    wakeUserUp(usernameKey);
-  }
-  
-   // Skin command (e.g. !red)
-  if (message.startsWith("!")) {
-    const requestedSkin = message.slice(1).toLowerCase();
+      if (regex.test(msg)) {
+        command.action(usernameKey);
+        return true;
+      }
 
-    // Ignore built-in commands
-    if (["lurk", "leave", "sleep"].includes(requestedSkin)) return;
-
-    handleSkinCommand(usernameKey, requestedSkin);
-    return;
-  }
-  
-  const userDiv = activeUsers[usernameKey];
-  if (userDiv) {
-    const bubble = userDiv.querySelector(".speech-bubble");
-    if (bubble) {
-      bubble.textContent = message;
-      bubble.style.display = "block";
-      bubble.style.opacity = "1";
-
-      setTimeout(() => {
-        bubble.style.opacity = "0";
-      }, 3000);
     }
   }
 
-  resetIdleTimer(usernameKey);
-  resetRemovalTimer(usernameKey);
-});
+  return false;
+}
 
+function processChatCommands(message, usernameKey) {
+  const msg = message.toLowerCase();
+
+  for (const command of commandRegistry) {
+    for (const trigger of command.triggers) {
+
+      const regex = new RegExp(`\\!${trigger}\\b`);
+
+      if (regex.test(msg)) {
+        command.action(usernameKey);
+        return true;
+      }
+
+    }
+  }
+
+  return false;
+}
 
 // ---------------------------
 //  USER JOIN HANDLER 
