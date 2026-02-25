@@ -254,7 +254,61 @@ function processChatCommands(message, usernameKey) {
 
   return false;
 }
+// ---------------------------
+//  CHAT MESSAGE HANDLER 
+// ---------------------------
+client.on('message', (channel, tags, message, self) => {
+  if (self) return;
 
+  const username = tags['display-name'] || tags.username;
+  const usernameKey = username.toLowerCase();
+
+  if (!activeUsers[usernameKey]) {
+    dropUser(username);
+  }
+
+  // Process built-in commands
+  if (processChatCommands(message, usernameKey)) {
+    return;
+  }
+
+  // Skin command (e.g. !red anywhere in message)
+  const msg = message.toLowerCase();
+  const skinMatch = msg.match(/\!(\w+)/);
+
+  if (skinMatch) {
+    const requestedSkin = skinMatch[1];
+
+    // Ignore commands already handled by registry
+    const reservedCommands = commandRegistry.flatMap(c => c.triggers);
+
+    if (!reservedCommands.includes(requestedSkin)) {
+      handleSkinCommand(usernameKey, requestedSkin);
+      return;
+    }
+  }
+
+  if (userStates[usernameKey] !== "active") {
+    wakeUserUp(usernameKey);
+  }
+
+  const userDiv = activeUsers[usernameKey];
+  if (userDiv) {
+    const bubble = userDiv.querySelector(".speech-bubble");
+    if (bubble) {
+      bubble.textContent = message;
+      bubble.style.display = "block";
+      bubble.style.opacity = "1";
+
+      setTimeout(() => {
+        bubble.style.opacity = "0";
+      }, 3000);
+    }
+  }
+
+  resetIdleTimer(usernameKey);
+  resetRemovalTimer(usernameKey);
+});
 // ---------------------------
 //  USER JOIN HANDLER 
 // ---------------------------
