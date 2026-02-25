@@ -209,7 +209,7 @@ const commandRegistry = [
     action: (usernameKey) => removeUser(usernameKey)
   },
   {
-    triggers: ["sleep"],
+    triggers: ["sleep", "away"],
     action: (usernameKey) => setUserIdle(usernameKey)
   }
 ];
