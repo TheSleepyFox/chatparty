@@ -3,6 +3,20 @@
  * js v0.01
  ************************************************************/
 
+// ---------------------------
+// CHANNEL RESOLUTION
+// ---------------------------
+
+// Get channel from URL query (?channelName)
+const urlChannel = window.location.search
+  .replace("?", "")
+  .trim()
+  .toLowerCase();
+
+// Fallback channel if none provided
+const CHANNEL_NAME = urlChannel || "thesleepyfox";
+
+console.log("Connecting to channel:", CHANNEL_NAME);
 
 // ---------------------------
 //  TWITCH CHAT CLIENT SETUP 
@@ -10,7 +24,7 @@
 
 const client = new tmi.Client({
   connection: { secure: true, reconnect: true },
-  channels: ['thesleepyfox']
+  channels: [CHANNEL_NAME]
 });
 
 client.connect();
