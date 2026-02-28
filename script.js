@@ -339,6 +339,18 @@ client.on('join', (channel, username, self) => {
   dropUser(username);
 });
 
+// ---------------------------
+//Colourised User
+// ---------------------------
+function shouldUseColorizedDefault(usernameKey) {
+  const skin = userSkins[usernameKey];
+
+  // No skin assigned yet → allow colorized default
+  if (!skin) return true;
+
+  // Only colorize the base default skin
+  return skin === "default";
+}
 
 // ---------------------------
 //  USER SPAWN 
