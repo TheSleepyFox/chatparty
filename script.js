@@ -114,6 +114,7 @@ const userIdleTimers = {};
 const userRemovalTimers = {};
 const userStates = {}; // "active" | "idle" | "lurking"
 let userSkins = {};
+const userColors = {};
 
 // ---------------------------
 //  REGISTRY LOADER 
@@ -274,6 +275,12 @@ function processChatCommands(message, usernameKey) {
 client.on('message', (channel, tags, message, self) => {
   if (self) return;
 
+  const twitchColor = tags.color; // e.g. "#FF69B4"
+
+  if (twitchColor) {
+    userColors[usernameKey] = twitchColor;
+  }
+  
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
   const userColor = getUserColor(tags);
@@ -587,8 +594,8 @@ function spawnPoofAtUser(userDiv, usernameKey) {
 // ---------------------------
 //  Custom colour
 // ---------------------------
-function getUserColor(tags) {
-  return tags.color || "#9146FF"; // Twitch purple fallback
+function getUserColor(usernameKey) {
+  return userColors[usernameKey] || "#ffffff"; // fallback white
 }
 
 //Hex to RGB helper
@@ -634,7 +641,7 @@ const recoloredAvatarCache = new Map();
 
 //Generate recolored avatar set
 async function getColorizedDefaultSet(usernameKey) {
-  const color = userColors[usernameKey];
+  const color = getUserColor(usernameKey);
   const cacheKey = `default:${color}`;
 
   if (recoloredAvatarCache.has(cacheKey)) {
