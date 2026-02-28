@@ -276,6 +276,9 @@ client.on('message', (channel, tags, message, self) => {
 
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
+  const userColor = getUserColor(tags);
+
+  userColors[usernameKey] = userColor;
 
   if (!activeUsers[usernameKey]) {
     dropUser(username);
@@ -376,6 +379,15 @@ function dropUser(username, emoji) {
   activeUsers[usernameKey] = userDiv;
   userStates[usernameKey] = "active";
 
+  // CUSTOM COLOR
+  let avatarSet;
+
+  if (shouldUseColorizedDefault(usernameKey)) {
+    avatarSet = await getColorizedDefaultSet(usernameKey);
+  } else {
+    avatarSet = getNormalAvatarSet(usernameKey);
+  }
+  
   // START BOTH TIMERS ON SPAWN
   resetIdleTimer(usernameKey);
   resetRemovalTimer(usernameKey);
@@ -559,6 +571,80 @@ function spawnPoofAtUser(userDiv, usernameKey) {
   setTimeout(() => {
     poof.remove();
   }, 1000);
+}
+// ---------------------------
+//  Custom colour
+// ---------------------------
+function getUserColor(tags) {
+  return tags.color || "#9146FF"; // Twitch purple fallback
+}
+
+//Hex to RGB helper
+function hexToRGB(hex) {
+  const v = hex.replace("#", "");
+  return [
+    parseInt(v.substring(0,2), 16),
+    parseInt(v.substring(2,4), 16),
+    parseInt(v.substring(4,6), 16)
+  ];
+}
+
+//Core recolor function (single-color replacement)
+function recolorImage(img, fromRGB, toRGB) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    if (
+      data[i]   === fromRGB[0] &&
+      data[i+1] === fromRGB[1] &&
+      data[i+2] === fromRGB[2]
+    ) {
+      data[i]   = toRGB[0];
+      data[i+1] = toRGB[1];
+      data[i+2] = toRGB[2];
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL();
+}
+
+//Cache recolored avatar sets
+const recoloredAvatarCache = new Map();
+
+//Generate recolored avatar set
+async function getColorizedDefaultSet(usernameKey) {
+  const color = userColors[usernameKey];
+  const cacheKey = `default:${color}`;
+
+  if (recoloredAvatarCache.has(cacheKey)) {
+    return recoloredAvatarCache.get(cacheKey);
+  }
+
+  const targetRGB = hexToRGB(color);
+  const baseRGB = [255, 255, 255]; // example: white base
+
+  const states = ["idle", "left", "right", "away", "lurk"];
+  const result = {};
+
+  for (const state of states) {
+    const img = new Image();
+    img.src = `assets/default/${state}.gif`;
+
+    await img.decode();
+    result[state] = recolorImage(img, baseRGB, targetRGB);
+  }
+
+  recoloredAvatarCache.set(cacheKey, result);
+  return result;
 }
 
 // ---------------------------
