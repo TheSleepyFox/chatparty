@@ -343,7 +343,7 @@ client.on('join', (channel, username, self) => {
 // ---------------------------
 //  USER SPAWN 
 // ---------------------------
-function dropUser(username, emoji) {
+async function dropUser(username, emoji) {
   const usernameKey = username.toLowerCase();
   
   // Assign skin
