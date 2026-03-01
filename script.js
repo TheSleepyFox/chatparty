@@ -345,6 +345,42 @@ client.on('join', (channel, username, self) => {
 // ---------------------------
 // COLOUR HELPERS
 // ---------------------------
+function normalizeTwitchColor(hex) {
+  const { h, s, l } = hexToHSL(hex);
+
+  return {
+    h,
+    s: Math.max(0.4, s),
+    l: Math.min(Math.max(l, 0.35), 0.75)
+  };
+}
+
+function hexToHSL(hex) {
+  let r = parseInt(hex.substr(1,2),16) / 255;
+  let g = parseInt(hex.substr(3,2),16) / 255;
+  let b = parseInt(hex.substr(5,2),16) / 255;
+
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+
+    h *= 60;
+  }
+
+  return { h, s, l };
+}
+
 function applyUserColorFilter(img, usernameKey) {
   const skin = userSkins[usernameKey];
   if (skin !== "default") {
@@ -363,21 +399,14 @@ function applyUserColorFilter(img, usernameKey) {
 
 //Convert Twitch hex → CSS filter
 function twitchColorToFilter(hex) {
-  // Convert hex to approximate hue rotation
-  // This keeps luminance & animation intact
-  const rgb = hex.replace("#", "");
-  const r = parseInt(rgb.substring(0,2), 16);
-  const g = parseInt(rgb.substring(2,4), 16);
-  const b = parseInt(rgb.substring(4,6), 16);
-
-  const avg = (r + g + b) / 3;
-  const brightness = avg / 128;
+  const { h, s, l } = normalizeTwitchColor(hex);
 
   return `
-    brightness(${brightness})
     sepia(1)
-    hue-rotate(${rgbToHue(r, g, b)}deg)
-    saturate(4)
+    hue-rotate(${Math.round(h)}deg)
+    saturate(${1 + s * 1.5})
+    brightness(${0.8 + l * 0.4})
+    contrast(1.1)
   `;
 }
 
