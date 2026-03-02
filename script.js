@@ -398,7 +398,7 @@ function twitchColorToFilter(hex) {
 
   // Expand warm hues so red/orange separate properly
   if (h < 60) {
-    adjustedHue = h * 0.75; // pull reds further from yellow
+    adjustedHue = h * 0.60; // pull reds further from yellow
   }
 
   const rotate = adjustedHue - BASE_HUE;
