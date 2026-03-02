@@ -345,15 +345,7 @@ client.on('join', (channel, username, self) => {
 // ---------------------------
 // COLOUR HELPERS
 // ---------------------------
-function normalizeTwitchColor(hex) {
-  const { h, s, l } = hexToHSL(hex);
 
-  return {
-    h,
-    s: Math.max(0.4, s),
-    l: Math.min(Math.max(l, 0.35), 0.75)
-  };
-}
 
 function hexToHSL(hex) {
   let r = parseInt(hex.substr(1,2),16) / 255;
@@ -399,14 +391,12 @@ function applyUserColorFilter(img, usernameKey) {
 
 //Convert Twitch hex → CSS filter
 function twitchColorToFilter(hex) {
-  const { h, s, l } = normalizeTwitchColor(hex);
+  const { h, s, l } = hexToHSL(hex);
 
   return `
-    sepia(1)
     hue-rotate(${Math.round(h)}deg)
-    saturate(${1 + s * 1.5})
-    brightness(${0.8 + l * 0.4})
-    contrast(1.1)
+    saturate(${Math.max(1.8, s * 2)})
+    brightness(${0.95 + l * 0.1})
   `;
 }
 
