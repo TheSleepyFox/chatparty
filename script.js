@@ -393,10 +393,12 @@ function applyUserColorFilter(img, usernameKey) {
 function twitchColorToFilter(hex) {
   const { h, s, l } = hexToHSL(hex);
 
+  const BASE_HUE = 60; // yellow pivot
+
   return `
-    hue-rotate(${Math.round(h)}deg)
-    saturate(${Math.max(1.2, s * 1.5)})
-    brightness(${0.9 + l * 0.2})
+    hue-rotate(${Math.round(h - BASE_HUE)}deg)
+    saturate(${Math.max(1.4, s * 1.8)})
+    brightness(${0.95 + l * 0.1})
   `;
 }
 
