@@ -394,9 +394,12 @@ function twitchColorToFilter(hex) {
   const { h, s, l } = hexToHSL(hex);
 
   return `
+    grayscale(1)
+    brightness(1)
+    sepia(1)
     hue-rotate(${Math.round(h)}deg)
-    saturate(${Math.max(1.8, s * 2)})
-    brightness(${0.95 + l * 0.1})
+    saturate(${Math.max(2, s * 2.5)})
+    brightness(${0.9 + l * 0.2})
   `;
 }
 
