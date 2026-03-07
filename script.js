@@ -345,7 +345,38 @@ client.on('join', (channel, username, self) => {
 // ---------------------------
 // COLOUR HELPERS
 // ---------------------------
+const TWITCH_COLOR_HSL = {
+  "#ff0000": { h: 0, s: 1, l: 0.5 },      // Red
+  "#0000ff": { h: 240, s: 1, l: 0.5 },    // Blue
+  "#008000": { h: 120, s: 1, l: 0.25 },   // Green
+  "#b22222": { h: 0, s: 0.68, l: 0.41 },  // Firebrick
+  "#ff7f50": { h: 16, s: 1, l: 0.66 },    // Coral
+  "#9acd32": { h: 80, s: 0.61, l: 0.5 },  // YellowGreen
+  "#ff4500": { h: 16, s: 1, l: 0.5 },     // OrangeRed
+  "#2e8b57": { h: 146, s: 0.5, l: 0.36 }, // SeaGreen
+  "#daa520": { h: 43, s: 0.74, l: 0.49 }, // GoldenRod
+  "#d2691e": { h: 25, s: 0.75, l: 0.47 }, // Chocolate
+  "#5f9ea0": { h: 182, s: 0.25, l: 0.5 }, // CadetBlue
+  "#1e90ff": { h: 210, s: 1, l: 0.56 },   // DodgerBlue
+  "#ff69b4": { h: 330, s: 1, l: 0.71 },   // HotPink
+  "#8a2be2": { h: 271, s: 0.76, l: 0.53 },// BlueViolet
+  "#00ff7f": { h: 150, s: 1, l: 0.5 }     // SpringGreen
+};
 
+function normalizeHex(hex) {
+  if (!hex) return null;
+  return hex.trim().toLowerCase();
+}
+
+function getHSLFromHex(hex) {
+  const normalized = normalizeHex(hex);
+
+  if (TWITCH_COLOR_HSL[normalized]) {
+    return TWITCH_COLOR_HSL[normalized];
+  }
+
+  return hexToHSL(normalized);
+}
 
 function hexToHSL(hex) {
   let r = parseInt(hex.substr(1,2),16) / 255;
@@ -391,14 +422,13 @@ function applyUserColorFilter(img, usernameKey) {
 
 //Convert Twitch hex → CSS filter
 function twitchColorToFilter(hex) {
-  const { h, s, l } = hexToHSL(hex);
-  const BASE_HUE = 60; // yellow base
+  const { h, s, l } = getHSLFromHex(hex);
+  const BASE_HUE = 60;
 
   let adjustedHue = h;
 
-  // Expand warm hues so red/orange separate properly
   if (h < 60) {
-    adjustedHue = h * 0.60; // pull reds further from yellow
+    adjustedHue = h * 0.75;
   }
 
   const rotate = adjustedHue - BASE_HUE;
