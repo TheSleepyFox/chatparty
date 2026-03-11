@@ -408,7 +408,7 @@ function applyUserColorFilter(img, usernameKey) {
   const skin = userSkins[usernameKey];
   if (skin !== "default") {
     img.style.filter = "";
-    console.log("twitchColor", twitchColor);
+    console.log("userColors[usernameKey];", userColors[usernameKey];);
     return;
   }
 
