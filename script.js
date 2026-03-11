@@ -408,7 +408,7 @@ function applyUserColorFilter(img, usernameKey) {
   const skin = userSkins[usernameKey];
   if (skin !== "default") {
     img.style.filter = "";
-    console.log("userColors[usernameKey];", userColors[usernameKey];);
+    console.log("userColors[usernameKey]", userColors[usernameKey]);
     return;
   }
 
