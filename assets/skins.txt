@@ -1,7 +1,7 @@
 # Public skins
 default
 red
-publictest
+purple
 
 # User-locked skins
 @thesleepyfox
