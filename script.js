@@ -169,10 +169,18 @@ await validateAllSkins();
 // Skin Assignment Helper
 // ---------------------------
 function assignInitialSkin(usernameKey) {
+
   // User-only skin match
   if (validUserOnlySkins.includes(usernameKey)) {
     console.log(`User "${usernameKey}" assigned user-only skin.`);
     return usernameKey;
+  }
+
+  const color = normalizeHex(userColors[usernameKey]);
+
+  // Twitch preset color skins
+  if (color === "#8a2be2") {
+    return "purple";
   }
 
   // Default fallback
