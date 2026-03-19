@@ -2,6 +2,7 @@
 default
 red
 purple
+dodger_blue
 
 # User-locked skins
 @thesleepyfox
