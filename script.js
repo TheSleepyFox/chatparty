@@ -182,6 +182,10 @@ function assignInitialSkin(usernameKey) {
   if (color === "#8a2be2") {
     return "purple";
   }
+  if (color === "#1e90ff") {
+    return "dodger_blue";
+  }
+  
 
   // Default fallback
   if (validPublicSkins.includes("default")) {
@@ -289,6 +293,15 @@ client.on('message', (channel, tags, message, self) => {
   
   if (twitchColor) {
     userColors[usernameKey] = twitchColor;
+
+     if (activeUsers[usernameKey]) {
+      const newSkin = assignInitialSkin(usernameKey);
+  
+      if (newSkin && userSkins[usernameKey] !== newSkin) {
+        userSkins[usernameKey] = newSkin;
+        refreshUserAppearance(usernameKey);
+      }
+    }
   }
   
   if (!activeUsers[usernameKey]) {
