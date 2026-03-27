@@ -354,14 +354,14 @@ client.on('message', (channel, tags, message, self) => {
 //  USER JOIN HANDLER 
 // ---------------------------
 
-client.on('join', (channel, username, self) => {
-  if (self) return;
+//client.on('join', (channel, username, self) => {
+// if (self) return;
 
-  const usernameKey = username.toLowerCase();
-  if (activeUsers[usernameKey]) return;
+//  const usernameKey = username.toLowerCase();
+//  if (activeUsers[usernameKey]) return;
 
-  dropUser(username);
-});
+//  dropUser(username);
+//});
 
 // ---------------------------
 // COLOUR HELPERS
