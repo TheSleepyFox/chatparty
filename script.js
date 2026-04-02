@@ -185,6 +185,45 @@ function assignInitialSkin(usernameKey) {
   if (color === "#1e90ff") {
     return "dodger_blue";
   }
+  if (color === "#ff0000") {
+    return "easter_red";
+  }  
+  if (color === "#0000ff") {
+    return "easter_blue";
+  }  
+  if (color === "#008000") {
+    return "easter_green";
+  }  
+  if (color === "#b22222") {
+    return "easter_firebrick";
+  }
+  if (color === "#ff7f50") {
+    return "easter_coral";
+  }
+  if (color === "#9acd32") {
+    return "easter_yellow_green";
+  }
+  if (color === "#ff4500") {
+    return "easter_orange_red";
+  }
+  if (color === "#2e8b57") {
+    return "easter_sea_green";
+  }
+  if (color === "#daa520") {
+    return "easter_goldenrod";
+  }
+  if (color === "#d2691e") {
+    return "easter_chocolate";
+  }
+  if (color === "#5f9ea0") {
+    return "easter_cadet_blue";
+  }
+  if (color === "#ff69b4") {
+    return "easter_hot_pink";
+  }
+  if (color === "#00ff7f") {
+    return "easter_spring_green";
+  }
   
 
   // Default fallback
