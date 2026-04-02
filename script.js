@@ -115,6 +115,7 @@ const userRemovalTimers = {};
 const userStates = {}; // "active" | "idle" | "lurking"
 let userSkins = {};
 const userColors = {};
+const userSkinLocked = {};
 
 // ---------------------------
 //  REGISTRY LOADER 
@@ -296,7 +297,14 @@ client.on('message', (channel, tags, message, self) => {
     userColors[usernameKey] = twitchColor;
 
      if (activeUsers[usernameKey]) {
-      const newSkin = assignInitialSkin(usernameKey);
+      if (!userSkinLocked[usernameKey]) {
+        const newSkin = assignInitialSkin(usernameKey);
+      
+        if (newSkin && userSkins[usernameKey] !== newSkin) {
+          userSkins[usernameKey] = newSkin;
+          refreshUserAppearance(usernameKey);
+        }
+      }
   
       if (newSkin && userSkins[usernameKey] !== newSkin) {
         userSkins[usernameKey] = newSkin;
@@ -716,6 +724,8 @@ function handleSkinCommand(usernameKey, skinName) {
 
   // Assign new skin
   userSkins[usernameKey] = skinName;
+
+  userSkinLocked[usernameKey] = true;
 
   console.log(`${usernameKey} switched to skin: ${skinName}`);
 
