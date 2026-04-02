@@ -114,6 +114,7 @@ const userIdleTimers = {};
 const userRemovalTimers = {};
 const userStates = {}; // "active" | "idle" | "lurking"
 let userSkins = {};
+const userColors = {};
 
 // ---------------------------
 //  REGISTRY LOADER 
@@ -168,11 +169,23 @@ await validateAllSkins();
 // Skin Assignment Helper
 // ---------------------------
 function assignInitialSkin(usernameKey) {
+
   // User-only skin match
   if (validUserOnlySkins.includes(usernameKey)) {
     console.log(`User "${usernameKey}" assigned user-only skin.`);
     return usernameKey;
   }
+
+  const color = normalizeHex(userColors[usernameKey]);
+
+  // Twitch preset color skins
+  if (color === "#8a2be2") {
+    return "purple";
+  }
+  if (color === "#1e90ff") {
+    return "dodger_blue";
+  }
+  
 
   // Default fallback
   if (validPublicSkins.includes("default")) {
@@ -276,7 +289,21 @@ client.on('message', (channel, tags, message, self) => {
 
   const username = tags['display-name'] || tags.username;
   const usernameKey = username.toLowerCase();
+  const twitchColor = tags.color;
+  
+  if (twitchColor) {
+    userColors[usernameKey] = twitchColor;
 
+     if (activeUsers[usernameKey]) {
+      const newSkin = assignInitialSkin(usernameKey);
+  
+      if (newSkin && userSkins[usernameKey] !== newSkin) {
+        userSkins[usernameKey] = newSkin;
+        refreshUserAppearance(usernameKey);
+      }
+    }
+  }
+  
   if (!activeUsers[usernameKey]) {
     dropUser(username);
   }
@@ -327,15 +354,126 @@ client.on('message', (channel, tags, message, self) => {
 //  USER JOIN HANDLER 
 // ---------------------------
 
-client.on('join', (channel, username, self) => {
-  if (self) return;
+//client.on('join', (channel, username, self) => {
+// if (self) return;
 
-  const usernameKey = username.toLowerCase();
-  if (activeUsers[usernameKey]) return;
+//  const usernameKey = username.toLowerCase();
+//  if (activeUsers[usernameKey]) return;
 
-  dropUser(username);
-});
+//  dropUser(username);
+//});
 
+// ---------------------------
+// COLOUR HELPERS
+// ---------------------------
+const TWITCH_COLOR_HSL = {
+  "#ff0000": { h: 0, s: 1, l: 0.5 },      // Red
+  "#0000ff": { h: 240, s: 1, l: 0.5 },    // Blue
+  "#008000": { h: 120, s: 1, l: 0.25 },   // Green
+  "#b22222": { h: 0, s: 0.68, l: 0.41 },  // Firebrick
+  "#ff7f50": { h: 16, s: 1, l: 0.66 },    // Coral
+  "#9acd32": { h: 80, s: 0.61, l: 0.5 },  // YellowGreen
+  "#ff4500": { h: 16, s: 1, l: 0.5 },     // OrangeRed
+  "#2e8b57": { h: 146, s: 0.5, l: 0.36 }, // SeaGreen
+  "#daa520": { h: 43, s: 0.74, l: 0.49 }, // GoldenRod
+  "#d2691e": { h: 25, s: 0.75, l: 0.47 }, // Chocolate
+  "#5f9ea0": { h: 182, s: 0.25, l: 0.5 }, // CadetBlue
+  "#1e90ff": { h: 210, s: 1, l: 0.56 },   // DodgerBlue
+  "#ff69b4": { h: 330, s: 1, l: 0.71 },   // HotPink
+  "#8a2be2": { h: 271, s: 0.76, l: 0.53 },// BlueViolet
+  "#00ff7f": { h: 150, s: 1, l: 0.5 }     // SpringGreen
+};
+
+function normalizeHex(hex) {
+  if (!hex) return null;
+  return hex.trim().toLowerCase();
+}
+
+function getHSLFromHex(hex) {
+  const normalized = normalizeHex(hex);
+
+  if (TWITCH_COLOR_HSL[normalized]) {
+    return TWITCH_COLOR_HSL[normalized];
+  }
+
+  return hexToHSL(normalized);
+}
+
+function hexToHSL(hex) {
+  let r = parseInt(hex.substr(1,2),16) / 255;
+  let g = parseInt(hex.substr(3,2),16) / 255;
+  let b = parseInt(hex.substr(5,2),16) / 255;
+
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+
+    h *= 60;
+  }
+
+  return { h, s, l };
+}
+
+function applyUserColorFilter(img, usernameKey) {
+  const skin = userSkins[usernameKey];
+  if (skin !== "default") {
+    img.style.filter = "";
+    console.log("userColors[usernameKey]",usernameKey," ", userColors[usernameKey]);
+    return;
+  }
+
+  const color = userColors[usernameKey];
+  if (!color) {
+    img.style.filter = "";
+    return;
+  }
+
+  img.style.filter = twitchColorToFilter(color);
+}
+
+//Convert Twitch hex → CSS filter
+function twitchColorToFilter(hex) {
+  const { h, s, l } = getHSLFromHex(hex);
+  const BASE_HUE = 60;
+
+  let adjustedHue = h;
+
+  if (h < 60) {
+    adjustedHue = h * 0.75;
+  }
+
+  const rotate = adjustedHue - BASE_HUE;
+
+  return `
+    hue-rotate(${Math.round(rotate)}deg)
+    saturate(${Math.max(1.6, s * 2)})
+    brightness(${0.95 + l * 0.1})
+  `;
+}
+
+function rgbToHue(r, g, b) {
+  const max = Math.max(r,g,b);
+  const min = Math.min(r,g,b);
+  let hue = 0;
+
+  if (max === min) hue = 0;
+  else if (max === r) hue = (60 * ((g - b) / (max - min)) + 360) % 360;
+  else if (max === g) hue = 60 * ((b - r) / (max - min)) + 120;
+  else hue = 60 * ((r - g) / (max - min)) + 240;
+
+  return Math.round(hue);
+}
 
 // ---------------------------
 //  USER SPAWN 
@@ -363,6 +501,7 @@ function dropUser(username, emoji) {
   const emojiDiv = document.createElement("img");
   emojiDiv.className = "join-emoji";
   emojiDiv.src = getUserAsset(usernameKey, "idle");
+  applyUserColorFilter(emojiDiv, usernameKey);
 
   const speechBubble = document.createElement("div");
   speechBubble.className = "speech-bubble";
@@ -591,6 +730,8 @@ function refreshUserAppearance(usernameKey) {
 
   const state = userStates[usernameKey];
 
+  applyUserColorFilter(img, usernameKey);
+  
   switch (state) {
     case "idle":
       img.src = getUserAsset(usernameKey, "away");
