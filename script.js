@@ -295,16 +295,9 @@ client.on('message', (channel, tags, message, self) => {
   
   if (twitchColor) {
     userColors[usernameKey] = twitchColor;
-
-     if (activeUsers[usernameKey]) {
-      if (!userSkinLocked[usernameKey]) {
-        const newSkin = assignInitialSkin(usernameKey);
-      
-        if (newSkin && userSkins[usernameKey] !== newSkin) {
-          userSkins[usernameKey] = newSkin;
-          refreshUserAppearance(usernameKey);
-        }
-      }
+  
+    if (activeUsers[usernameKey]) {
+      const newSkin = assignInitialSkin(usernameKey);
   
       if (newSkin && userSkins[usernameKey] !== newSkin) {
         userSkins[usernameKey] = newSkin;
