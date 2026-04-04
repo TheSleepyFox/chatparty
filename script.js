@@ -54,7 +54,14 @@ const REQUIRED_SKIN_FILES = [
 // File Existence Checker
 async function fileExists(path) {
   try {
-    const response = await fetch(path, { method: "HEAD" });
+    // Try HEAD first
+    let response = await fetch(path, { method: "HEAD" });
+
+    // Fallback to GET if HEAD fails
+    if (!response.ok) {
+      response = await fetch(path, { method: "GET" });
+    }
+
     return response.ok;
   } catch {
     return false;
@@ -171,6 +178,15 @@ await validateAllSkins();
 // ---------------------------
 function assignInitialSkin(usernameKey) {
 
+  if (userSkinLocked[usernameKey]) {
+    return userSkins[usernameKey];
+  }
+
+  if (!registryLoaded) {
+    console.warn("Registry not loaded yet, using fallback skin.");
+    return "default";
+  }
+  
   // User-only skin match
   if (validUserOnlySkins.includes(usernameKey)) {
     console.log(`User "${usernameKey}" assigned user-only skin.`);
@@ -195,7 +211,7 @@ function assignInitialSkin(usernameKey) {
   }
 
   console.warn("No valid default skin found. User will have no skin.");
-  return null;
+  return "default";
 }
 
 
@@ -265,24 +281,6 @@ function processChatCommands(message, usernameKey) {
   return false;
 }
 
-function processChatCommands(message, usernameKey) {
-  const msg = message.toLowerCase();
-
-  for (const command of commandRegistry) {
-    for (const trigger of command.triggers) {
-
-      const regex = new RegExp(`\\!${trigger}\\b`);
-
-      if (regex.test(msg)) {
-        command.action(usernameKey);
-        return true;
-      }
-
-    }
-  }
-
-  return false;
-}
 // ---------------------------
 //  CHAT MESSAGE HANDLER 
 // ---------------------------
@@ -295,10 +293,10 @@ client.on('message', (channel, tags, message, self) => {
   
   if (twitchColor) {
     userColors[usernameKey] = twitchColor;
-  
-    if (activeUsers[usernameKey]) {
+
+    if (!userSkinLocked[usernameKey] && activeUsers[usernameKey]) {
       const newSkin = assignInitialSkin(usernameKey);
-  
+
       if (newSkin && userSkins[usernameKey] !== newSkin) {
         userSkins[usernameKey] = newSkin;
         refreshUserAppearance(usernameKey);
@@ -307,6 +305,11 @@ client.on('message', (channel, tags, message, self) => {
   }
   
   if (!activeUsers[usernameKey]) {
+    if (!registryLoaded) {
+      console.log("Skipping spawn, registry not ready yet.");
+      return;
+    }
+
     dropUser(username);
   }
 
@@ -428,7 +431,7 @@ function hexToHSL(hex) {
 }
 
 function applyUserColorFilter(img, usernameKey) {
-  const skin = userSkins[usernameKey];
+  const skin = userSkins[usernameKey] || "default";
   if (skin !== "default") {
     img.style.filter = "";
     console.log("userColors[usernameKey]",usernameKey," ", userColors[usernameKey]);
