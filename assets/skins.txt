@@ -3,6 +3,21 @@ default
 red
 purple
 dodger_blue
+easter_blue_violet
+easter_dodger_blue
+easter_red
+easter_blue
+easter_green
+easter_firebrick
+easter_coral
+easter_yellow_green
+easter_orange_red
+easter_sea_green
+easter_goldenrod
+easter_chocolate
+easter_cadet_blue
+easter_hot_pink
+easter_spring_green
 
 # User-locked skins
 @yemmiegoat
