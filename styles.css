@@ -29,8 +29,10 @@
 }
 
 .join-emoji, .poof {
-  width: 64px;
-  height: 64px;
+  /*width: 64px;*/
+  /*height: 64px;*/
+  width: 128px;
+  height: 128px;
   object-fit: contain;
   display: block;
   margin: 0 auto;
