@@ -11,7 +11,8 @@
 
 .user-container {
   position: absolute;
-  top: -50px;
+  /*top: -50px;*/
+  top: -128px;
   display: flex;
   flex-direction: column;
   align-items: center;
