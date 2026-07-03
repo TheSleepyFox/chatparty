@@ -275,8 +275,8 @@ function updateUserZIndex(usernameKey) {
 // ---------------------------
 //  TIMEOUT CONFIG 
 // ---------------------------
-const IDLE_TIMEOUT_MS   = 600000;
-const REMOVE_TIMEOUT_MS = 1200000;
+const IDLE_TIMEOUT_MS   = 1200000;
+const REMOVE_TIMEOUT_MS = 2400000;
 
 // ---------------------------
 // COMMAND REGISTRY
