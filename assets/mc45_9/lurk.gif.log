@@ -17,5 +17,5 @@ Output #0, gif, to '/media/robert/BulkStorage/BobbysDocuments/Projects/Twitch/Ch
   Stream #0:0: Video: gif, pal8(pc, gbr/unknown/unknown, progressive), 128x128 [SAR 1:1 DAR 1:1], q=2-31, 200 kb/s, 10 fps, 100 tbn
     Metadata:
       encoder         : Lavc60.31.102 gif
-frame=    1 fps=0.0 q=-0.0 size=       0kB time=00:00:00.10 bitrate=   0.0kbits/s speed=2.37x    [out#0/gif @ 0x5bc653e715c0] video:15kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.134228%
-frame=    5 fps=0.0 q=-0.0 Lsize=      15kB time=00:00:00.40 bitrate= 298.4kbits/s speed=8.87x    
+frame=    1 fps=0.0 q=-0.0 size=       0kB time=00:00:00.10 bitrate=   0.0kbits/s speed=2.41x    [out#0/gif @ 0x5cd51f8735c0] video:15kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.134228%
+frame=    5 fps=0.0 q=-0.0 Lsize=      15kB time=00:00:00.40 bitrate= 298.4kbits/s speed=   9x    
