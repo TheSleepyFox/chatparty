@@ -197,10 +197,10 @@ function assignInitialSkin(usernameKey) {
 
   // Twitch preset color skins
   if (color === "#8a2be2") {
-    return "easter_blue_violet";
+    return "purple";
   }
   if (color === "#1e90ff") {
-    return "easter_dodger_blue";
+    return "dodger_blue";
   }
   if (color === "#ff0000") {
     return "easter_red";
