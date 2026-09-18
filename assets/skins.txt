@@ -19,6 +19,8 @@ easter_cadet_blue
 easter_hot_pink
 easter_spring_green
 iamkingyoo
+woolbee
+yellow
 
 # User-locked skins
 @yemmiegoat
@@ -32,7 +34,6 @@ iamkingyoo
 @Phi_Kasei
 @ScuzzTheRat
 @theelectroshark
-@thesleepyfox
 @grey_dev
 @sleepy_fox_fire
 @RainMistCat
@@ -51,3 +52,4 @@ iamkingyoo
 @mc45_9
 @iamkingyoo
 @cherivale
+@crypticmango13

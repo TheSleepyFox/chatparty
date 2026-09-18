@@ -227,7 +227,7 @@ function assignInitialSkin(usernameKey) {
     return "easter_sea_green";
   }
   if (color === "#daa520") {
-    return "easter_goldenrod";
+    return "yellow";
   }
   if (color === "#d2691e") {
     return "easter_chocolate";
