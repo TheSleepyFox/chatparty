@@ -19,7 +19,6 @@ easter_cadet_blue
 easter_hot_pink
 easter_spring_green
 iamkingyoo
-woolbee
 yellow
 
 # User-locked skins
@@ -53,5 +52,5 @@ yellow
 @iamkingyoo
 @cherivale
 @crypticmango13
-@fatalerror
+@fatalerrorw
 
