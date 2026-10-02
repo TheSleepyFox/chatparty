@@ -197,31 +197,31 @@ function assignInitialSkin(usernameKey) {
 
   // Twitch preset color skins
   if (color === "#8a2be2") {
-    return "pumpkin";
+    return "ghost";
   }
   if (color === "#1e90ff") {
     return "pumpkin";
   }
   if (color === "#ff0000") {
-    return "pumpkin";
+    return "ghost";
   }  
   if (color === "#0000ff") {
     return "pumpkin";
   }  
   if (color === "#008000") {
-    return "pumpkin";
+    return "ghost";
   }  
   if (color === "#b22222") {
     return "pumpkin";
   }
   if (color === "#ff7f50") {
-    return "pumpkin";
+    return "ghost";
   }
   if (color === "#9acd32") {
     return "pumpkin";
   }
   if (color === "#ff4500") {
-    return "pumpkin";
+    return "ghost";
   }
   if (color === "#2e8b57") {
     return "pumpkin";
@@ -230,13 +230,13 @@ function assignInitialSkin(usernameKey) {
     return "yellow";
   }
   if (color === "#d2691e") {
-    return "pumpkin";
+    return "ghost";
   }
   if (color === "#5f9ea0") {
     return "pumpkin";
   }
   if (color === "#ff69b4") {
-    return "pumpkin";
+    return "ghost";
   }
   if (color === "#00ff7f") {
     return "pumpkin";
@@ -245,11 +245,11 @@ function assignInitialSkin(usernameKey) {
 
   // Default fallback
   if (validPublicSkins.includes("default")) {
-    return "default";
+    return "pumpkin";
   }
 
   console.warn("No valid default skin found. User will have no skin.");
-  return "default";
+  return "pumpkin";
 }
 
 
