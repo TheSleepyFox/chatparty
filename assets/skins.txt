@@ -21,6 +21,7 @@ easter_spring_green
 iamkingyoo
 yellow
 pumpkin
+ghost
 
 # User-locked skins
 @yemmiegoat
