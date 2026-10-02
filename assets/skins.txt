@@ -20,6 +20,7 @@ easter_hot_pink
 easter_spring_green
 iamkingyoo
 yellow
+pumpkin
 
 # User-locked skins
 @yemmiegoat
