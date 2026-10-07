@@ -394,6 +394,8 @@ function triggerFirework(username, rewardId) {
   );
 
   animation.onfinish = () => {
+    console.log("FIREWORK BURST TRIGGERED");
+    
     const burst = document.createElement("img");
 
     burst.src = firework.burst;
