@@ -334,78 +334,17 @@ function processChatCommands(message, usernameKey) {
 // ---------------------------
 // FIREWORKS
 // ---------------------------
-
 function triggerFirework(username, rewardId) {
   const usernameKey = username.toLowerCase();
   const firework = fireworksRegistry[rewardId];
   const userDiv = activeUsers[usernameKey];
 
-  // Not a registered firework or user isn't currently present.
-  if (!firework || !userDiv) return;
-
-  const container = document.getElementById("join-container");
-
-  // Create the rising tracer.
-  const tracer = document.createElement("img");
-  tracer.src = firework.tracer;
-  tracer.className = "firework-tracer";
-
-  // Launch from the creature's current horizontal position.
-  tracer.style.left = `${userDiv.offsetLeft}px`;
-  tracer.style.bottom = "0px";
-
-  container.appendChild(tracer);
-
-  // Pick a random height between 75% and 95% of the window height.
-  const targetHeight =
-    window.innerHeight * (0.75 + Math.random() * 0.20);
-
-  const startTime = performance.now();
-  const duration = 1000;
-
-  function animateTracer(currentTime) {
-    const progress = Math.min(
-      (currentTime - startTime) / duration,
-      1
-    );
-
-    const currentHeight =
-      window.innerHeight * progress;
-
-    tracer.style.bottom = `${currentHeight}px`;
-
-    if (progress < 1) {
-      requestAnimationFrame(animateTracer);
-    } else {
-      spawnFireworkBurst(tracer, firework);
-    }
-  }
-
-  requestAnimationFrame(animateTracer);
-}
-
-
-function spawnFireworkBurst(tracer, firework) {
-  const burst = document.createElement("img");
-  burst.src = firework.burst;
-  burst.className = "firework-burst";
-
-  burst.style.left = tracer.style.left;
-  burst.style.bottom = tracer.style.bottom;
-
-  tracer.remove();
-
-  document.getElementById("join-container").appendChild(burst);
-
-  burst.addEventListener("load", () => {
-    const frameRate = 100;
-    const duration = burst.naturalWidth > 0
-      ? 2000
-      : 2000;
-
-    setTimeout(() => {
-      burst.remove();
-    }, duration);
+  console.log("Firework trigger:", {
+    username,
+    usernameKey,
+    rewardId,
+    firework,
+    userDiv
   });
 }
 
@@ -413,11 +352,9 @@ function spawnFireworkBurst(tracer, firework) {
 //  CHAT MESSAGE HANDLER 
 // ---------------------------
 client.on('message', (channel, tags, message, self) => {  
-  if (tags['custom-reward-id']) {
-    triggerFirework(
-      tags.username,
-      tags['custom-reward-id']
-    );
+  
+  if (tags["custom-reward-id"]) {
+    triggerFirework(tags.username, tags["custom-reward-id"]);
   }
   
   if (self) return;
