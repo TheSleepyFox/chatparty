@@ -297,6 +297,18 @@ const commandRegistry = [
   }
 ];
 
+const fireworksRegistry = {
+    "01408635-8a48-49aa-9ab8-0ca92e10db62": {
+        tracer: "assets/fireworks/heart/tracer.gif",
+        burst: "assets/fireworks/heart/burst.gif"
+    },
+
+    "TWITCH_REWARD_ID_FOR_SPARKLE": {
+        tracer: "assets/fireworks/sparkle/tracer.gif",
+        burst: "assets/fireworks/sparkle/burst.gif"
+    }
+};
+
 // ---------------------------
 // COMMAND PROCESSOR
 // ---------------------------
@@ -329,6 +341,15 @@ client.on('message', (channel, tags, message, self) => {
   const usernameKey = username.toLowerCase();
   const twitchColor = tags.color;
   
+  if (tags['custom-reward-id']) {
+    console.log('Channel Point Redemption:', {
+        rewardId: tags['custom-reward-id'],
+        username: tags.username,
+        message: message
+    });
+  }
+
+
   if (twitchColor) {
     userColors[usernameKey] = twitchColor;
 
