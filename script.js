@@ -398,7 +398,7 @@ function triggerFirework(username, rewardId) {
     
     const burst = document.createElement("img");
 
-    burst.src = firework.burst;
+    burst.src = `${firework.burst}?t=${Date.now()}`;
     burst.style.position = "absolute";
     burst.style.left = `${userDiv.offsetLeft}px`;
     burst.style.bottom = `${targetHeight}px`;
