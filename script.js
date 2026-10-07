@@ -381,6 +381,18 @@ function triggerFirework(username, rewardId) {
       fill: "forwards"
     }
   );
+  animation.onfinish = () => {
+    const burst = document.createElement("img");
+
+    burst.src = firework.burst;
+    burst.style.position = "absolute";
+    burst.style.left = `${userDiv.offsetLeft}px`;
+    burst.style.bottom = `${targetHeight}px`;
+
+    container.appendChild(burst);
+
+    tracer.remove();
+  };
 }
 
 // ---------------------------
