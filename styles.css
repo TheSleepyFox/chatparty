@@ -66,6 +66,20 @@
   border-top-color: white;
 }
 
+.firework-tracer,
+.firework-burst {
+  position: absolute;
+  pointer-events: none;
+}
+
+.firework-tracer {
+  transform: translateX(-50%);
+}
+
+.firework-burst {
+  transform: translate(-50%, -50%);
+}
+
 
 @keyframes fall {
   0% {
