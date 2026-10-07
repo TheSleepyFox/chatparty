@@ -368,7 +368,7 @@ function triggerFirework(username, rewardId) {
 
   // Pick a random target between 75% and 95% of the window height.
   const targetHeight =
-    window.innerHeight * (0.75 + Math.random() * 0.20);
+    window.innerHeight * (0.75 + Math.random() * 0.10);
 
   tracer.animate(
     [
@@ -395,13 +395,18 @@ function triggerFirework(username, rewardId) {
 
   animation.onfinish = () => {
     console.log("FIREWORK BURST TRIGGERED");
-    
+
     const burst = document.createElement("img");
 
     burst.src = `${firework.burst}?t=${Date.now()}`;
     burst.style.position = "absolute";
     burst.style.left = `${userDiv.offsetLeft}px`;
     burst.style.bottom = `${targetHeight}px`;
+
+    const flip = Math.random() < 0.5 ? -1 : 1;
+    const rotation = -15 + Math.random() * 30;
+
+    burst.style.transform = `scaleX(${flip}) rotate(${rotation}deg)`;
 
     container.appendChild(burst);
 
