@@ -339,12 +339,13 @@ function triggerFirework(username, rewardId) {
   const firework = fireworksRegistry[rewardId];
   const userDiv = activeUsers[usernameKey];
 
-  console.log("Firework trigger:", {
-    username,
-    usernameKey,
-    rewardId,
-    firework,
-    userDiv
+  if (!firework || !userDiv) return;
+
+  console.log("Creature position:", {
+    offsetLeft: userDiv.offsetLeft,
+    offsetTop: userDiv.offsetTop,
+    left: userDiv.style.left,
+    top: userDiv.style.top
   });
 }
 
