@@ -340,6 +340,13 @@ function triggerFirework(username, rewardId) {
   const userDiv = activeUsers[usernameKey];
 
   if (!firework || !userDiv) return;
+  console.log("Firework trigger:", {
+    username,
+    usernameKey,
+    rewardId,
+    firework,
+    userDiv
+  });
 
   console.log("Creature position:", {
     offsetLeft: userDiv.offsetLeft,
@@ -347,6 +354,17 @@ function triggerFirework(username, rewardId) {
     left: userDiv.style.left,
     top: userDiv.style.top
   });
+
+  const container = document.getElementById("join-container");
+
+  const tracer = document.createElement("img");
+  tracer.src = firework.tracer;
+
+  tracer.style.position = "absolute";
+  tracer.style.left = `${userDiv.offsetLeft}px`;
+  tracer.style.bottom = "0px";
+
+  container.appendChild(tracer);
 }
 
 // ---------------------------
