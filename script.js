@@ -335,12 +335,6 @@ function processChatCommands(message, usernameKey) {
 //  CHAT MESSAGE HANDLER 
 // ---------------------------
 client.on('message', (channel, tags, message, self) => {
-  if (self) return;
-
-  const username = tags['display-name'] || tags.username;
-  const usernameKey = username.toLowerCase();
-  const twitchColor = tags.color;
-  
   if (tags['custom-reward-id']) {
     console.log('Channel Point Redemption:', {
         rewardId: tags['custom-reward-id'],
@@ -349,6 +343,12 @@ client.on('message', (channel, tags, message, self) => {
     });
   }
 
+  if (self) return;
+
+  const username = tags['display-name'] || tags.username;
+  const usernameKey = username.toLowerCase();
+  const twitchColor = tags.color;
+  
 
   if (twitchColor) {
     userColors[usernameKey] = twitchColor;
