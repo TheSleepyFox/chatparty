@@ -365,6 +365,22 @@ function triggerFirework(username, rewardId) {
   tracer.style.bottom = "0px";
 
   container.appendChild(tracer);
+
+  // Pick a random target between 75% and 95% of the window height.
+  const targetHeight =
+    window.innerHeight * (0.75 + Math.random() * 0.20);
+
+  tracer.animate(
+    [
+      { bottom: "0px" },
+      { bottom: `${targetHeight}px` }
+    ],
+    {
+      duration: 1000,
+      easing: "linear",
+      fill: "forwards"
+    }
+  );
 }
 
 // ---------------------------
