@@ -381,6 +381,18 @@ function triggerFirework(username, rewardId) {
       fill: "forwards"
     }
   );
+  const animation = tracer.animate(
+    [
+      { bottom: "0px" },
+      { bottom: `${targetHeight}px` }
+    ],
+    {
+      duration: 1000,
+      easing: "linear",
+      fill: "forwards"
+    }
+  );
+
   animation.onfinish = () => {
     const burst = document.createElement("img");
 
