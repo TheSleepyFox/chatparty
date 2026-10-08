@@ -908,11 +908,21 @@ function testDrop() {
 }
 
 function testFire() {
+  const usernames = Object.keys(activeUsers);
+
+  if (usernames.length === 0) return;
+
+  const randomUser =
+    usernames[Math.floor(Math.random() * usernames.length)];
+
   const rewardIds = Object.keys(fireworksRegistry);
+
+  if (rewardIds.length === 0) return;
+
   const randomRewardId =
     rewardIds[Math.floor(Math.random() * rewardIds.length)];
 
-  triggerFirework("TestUser", randomRewardId);
+  triggerFirework(randomUser, randomRewardId);
 }
 // ---------------------------
 //  FINAL CALLS 
