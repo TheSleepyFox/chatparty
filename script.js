@@ -338,9 +338,18 @@ function triggerFirework(username, rewardId) {
   const usernameKey = username.toLowerCase();
   const firework = fireworksRegistry[rewardId];
   const userDiv = activeUsers[usernameKey];
-  const launchX = userDiv.offsetLeft;
 
-  if (!firework || !userDiv) return;
+  if (!firework) return;
+
+  if (!userDiv) {
+    dropUser(username, null, () => {
+      triggerFirework(username, rewardId);
+    });
+    return;
+  }
+
+  const launchX = userDiv.offsetLeft;
+  
   console.log("Firework trigger:", {
     username,
     usernameKey,
@@ -626,7 +635,7 @@ function rgbToHue(r, g, b) {
 // ---------------------------
 //  USER SPAWN 
 // ---------------------------
-function dropUser(username, emoji) {
+function dropUser(username, emoji, onLanded = null) {
   const usernameKey = username.toLowerCase();
   
   // Assign skin
@@ -676,6 +685,9 @@ function dropUser(username, emoji) {
     // Only start wandering if the user is still active
     if (userStates[usernameKey] === "active") {
       startWandering(userDiv, usernameKey);
+    }
+    if (onLanded) {
+      onLanded();
     }
   }, 1600);
 }
