@@ -304,8 +304,8 @@ const fireworksRegistry = {
     },
 
     "TWITCH_REWARD_ID_FOR_SPARKLE": {
-        tracer: "assets/fireworks/sparkle/tracer.gif",
-        burst: "assets/fireworks/sparkle/burst.gif"
+        tracer: "assets/fireworks/heart/tracer.gif",
+        burst: "assets/fireworks/heart/burst.gif"
     }
 };
 
