@@ -309,7 +309,7 @@ const fireworksRegistry = {
     },
 
     "16e543cc-9807-4ced-aa11-30d59ff62a84": {
-        tracer: "assets/fireworks/gree_heart/tracer.gif",
+        tracer: "assets/fireworks/green_heart/tracer.gif",
         burst: "assets/fireworks/green_heart/burst.gif"
     }
 };
