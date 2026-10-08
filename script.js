@@ -405,8 +405,11 @@ function triggerFirework(username, rewardId) {
 
     const flip = Math.random() < 0.5 ? -1 : 1;
     const rotation = -15 + Math.random() * 30;
+    const scaleX = 0.9 + Math.random() * 0.2;
+    const scaleY = 0.9 + Math.random() * 0.2;
 
-    burst.style.transform = `scaleX(${flip}) rotate(${rotation}deg)`;
+    burst.style.transform =
+      `scaleX(${flip * scaleX}) scaleY(${scaleY}) rotate(${rotation}deg)`;
 
     container.appendChild(burst);
 
