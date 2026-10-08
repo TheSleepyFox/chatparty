@@ -306,6 +306,11 @@ const fireworksRegistry = {
     "91e5ef2c-4aac-4b7b-97d6-e964b9b8f7e0": {
         tracer: "assets/fireworks/blurple_heart/tracer.gif",
         burst: "assets/fireworks/blurple_heart/burst.gif"
+    },
+
+    "16e543cc-9807-4ced-aa11-30d59ff62a84": {
+        tracer: "assets/fireworks/gree_heart/tracer.gif",
+        burst: "assets/fireworks/green_heart/burst.gif"
     }
 };
 
@@ -349,7 +354,7 @@ function triggerFirework(username, rewardId) {
   }
 
   const launchX = userDiv.offsetLeft;
-  
+
   console.log("Firework trigger:", {
     username,
     usernameKey,
