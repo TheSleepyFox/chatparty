@@ -401,7 +401,7 @@ function triggerFirework(username, rewardId) {
 
     burst.src = `${firework.burst}?t=${Date.now()}`;
     burst.style.position = "absolute";
-    burst.style.left = `${userDiv.offsetLeft}px`;
+    burst.style.left = `${launchX}px`;
     burst.style.bottom = `${targetHeight}px`;
 
     const flip = Math.random() < 0.5 ? -1 : 1;
@@ -907,6 +907,13 @@ function testDrop() {
   dropUser(testUser);
 }
 
+function testFire() {
+  const rewardIds = Object.keys(fireworksRegistry);
+  const randomRewardId =
+    rewardIds[Math.floor(Math.random() * rewardIds.length)];
+
+  triggerFirework("TestUser", randomRewardId);
+}
 // ---------------------------
 //  FINAL CALLS 
 // ---------------------------
