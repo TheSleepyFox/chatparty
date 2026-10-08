@@ -338,6 +338,7 @@ function triggerFirework(username, rewardId) {
   const usernameKey = username.toLowerCase();
   const firework = fireworksRegistry[rewardId];
   const userDiv = activeUsers[usernameKey];
+  const launchX = userDiv.offsetLeft;
 
   if (!firework || !userDiv) return;
   console.log("Firework trigger:", {
@@ -361,7 +362,7 @@ function triggerFirework(username, rewardId) {
   tracer.src = firework.tracer;
 
   tracer.style.position = "absolute";
-  tracer.style.left = `${userDiv.offsetLeft}px`;
+  tracer.style.left = `${launchX}px`;
   tracer.style.bottom = "0px";
 
   container.appendChild(tracer);
