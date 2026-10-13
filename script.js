@@ -314,6 +314,12 @@ const fireworksRegistry = {
     }
 };
 
+const fireworkColours = [
+  "green",
+  "red",
+  "blurple"
+];
+
 // ---------------------------
 // COMMAND PROCESSOR
 // ---------------------------
@@ -339,10 +345,15 @@ function processChatCommands(message, usernameKey) {
 // ---------------------------
 // FIREWORKS
 // ---------------------------
-function triggerFirework(username, rewardId) {
+function triggerFirework(username, rewardId, message = "") {
   const usernameKey = username.toLowerCase();
   const firework = fireworksRegistry[rewardId];
+  const requestedColour = message.trim().toLowerCase();
   const userDiv = activeUsers[usernameKey];
+
+  const fireworkColour = fireworkColours.includes(requestedColour)
+  ? requestedColour
+  : fireworkColours[Math.floor(Math.random() * fireworkColours.length)];
 
   if (!firework) return;
 
@@ -373,7 +384,7 @@ function triggerFirework(username, rewardId) {
   const container = document.getElementById("join-container");
 
   const tracer = document.createElement("img");
-  tracer.src = firework.tracer;
+  tracer.src = `assets/fireworks/tracers/tracer_${fireworkColour}.gif`;
 
   tracer.style.position = "absolute";
   tracer.style.left = `${launchX}px`;
@@ -413,7 +424,7 @@ function triggerFirework(username, rewardId) {
 
     const burst = document.createElement("img");
 
-    burst.src = `${firework.burst}?t=${Date.now()}`;
+    burst.src = `assets/fireworks/${firework.style}/burst_${fireworkColour}.gif?t=${Date.now()}`;
     burst.style.position = "absolute";
     burst.style.left = `${launchX}px`;
     burst.style.bottom = `${targetHeight}px`;
@@ -438,7 +449,7 @@ function triggerFirework(username, rewardId) {
 client.on('message', (channel, tags, message, self) => {  
   
   if (tags["custom-reward-id"]) {
-    triggerFirework(tags.username, tags["custom-reward-id"]);
+    triggerFirework(tags.username, tags["custom-reward-id"], message);
   }
   
   if (self) return;
