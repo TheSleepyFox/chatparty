@@ -299,8 +299,7 @@ const commandRegistry = [
 
 const fireworksRegistry = {
     "01408635-8a48-49aa-9ab8-0ca92e10db62": {
-        tracer: "assets/fireworks/heart/tracer.gif",
-        burst: "assets/fireworks/heart/burst.gif"
+        style: "heart"
     },
 
     "91e5ef2c-4aac-4b7b-97d6-e964b9b8f7e0": {
