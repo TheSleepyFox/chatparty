@@ -288,11 +288,11 @@ const commandRegistry = [
     action: (usernameKey) => setUserLurking(usernameKey)
   },
   {
-    triggers: ["leave", "bye"],
+    triggers: ["leave", "bye", "hide", "disappear"],
     action: (usernameKey) => removeUser(usernameKey)
   },
   {
-    triggers: ["sleep", "away"],
+    triggers: ["sleep", "away", "zzz"],
     action: (usernameKey) => setUserIdle(usernameKey)
   }
 ];
